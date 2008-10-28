@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <TextView android:id="@+id/databaseText" 
+              android:layout_width="fill_parent" 
+              android:layout_height="wrap_content" 
+              android:text="Database Location"
+              />
+
+    <EditText android:id="@+id/databaseEntry" 
+              android:layout_width="fill_parent" 
+              android:layout_height="wrap_content" 
+              android:layout_below="@id/databaseText" 
+              />
+  
+    <TextView android:id="@+id/themeText" 
+              android:layout_width="fill_parent" 
+              android:layout_height="wrap_content" 
+              android:text="Theme"
+              android:layout_below="@id/databaseEntry" 
+              />
+
+    <EditText android:id="@+id/themeEntry" 
+              android:layout_width="fill_parent" 
+              android:layout_height="wrap_content" 
+              android:layout_below="@id/themeText" 
+              />
+              
+    <Button android:id="@+id/okButton" 
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content" 
+            android:layout_below="@id/themeEntry"
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="10px"
+            android:text="OK" />
+
+    <Button android:id="@+id/cancelButton"
+    		android:layout_width="wrap_content" 
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/okButton"
+            android:layout_alignTop="@id/okButton"
+            android:text="Cancel" />
+            
+</RelativeLayout>

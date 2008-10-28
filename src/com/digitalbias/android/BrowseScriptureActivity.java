@@ -1,0 +1,104 @@
+package com.digitalbias.android;
+
+import android.app.ListActivity;
+import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteException;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
+
+public class BrowseScriptureActivity extends ListActivity {
+	
+	public static final String TAG = "Scriptures";
+	public static final String GO_BACK_COMMAND = "CONTINUE_BACK";
+	
+	private static final int ACTIVITY_BROWSE_VOLUME = 0;
+	private static final int ACTIVITY_PREFERENCES = 1;
+	
+	private Cursor mVolumeCursor;
+	private ScriptureDbAdapter mAdapter;
+	
+    /** Called when the activity is first created. */
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        applyPreferences();
+    	fetchAllVolumes();
+    }
+    
+    protected void applyPreferences() throws SQLiteException {
+        setTheme(android.R.style.Theme_Light);
+        setContentView(R.layout.scripture_list);
+        if(mAdapter != null) {
+        	mAdapter.close();
+        	mAdapter = null;
+        }
+        mAdapter = new ScriptureDbAdapter(this);
+		mAdapter.open();
+    }
+    
+    private void fetchAllVolumes(){
+    	mVolumeCursor = mAdapter.fetchAllVolumes();
+    	startManagingCursor(mVolumeCursor);
+    	String[] from = new String[] { ScriptureDbAdapter.VOLUME_TITLE };
+    	int[] to = new int[] {R.id.text1 };
+    	
+    	SimpleCursorAdapter volumes = new SimpleCursorAdapter(this, R.layout.scripture_row, mVolumeCursor, from, to);
+    	setListAdapter(volumes);
+    }
+    
+    @Override
+    protected void onListItemClick(ListView l, View v, int position, long id) {
+    	super.onListItemClick(l, v, position, id);
+        Cursor c = mVolumeCursor;
+        c.moveToPosition(position);
+        Intent i = new Intent(this, BrowseVolumeActivity.class);
+        i.putExtra(ScriptureDbAdapter.TABLE_ID, id);
+        i.putExtra(ScriptureDbAdapter.VOLUME_TITLE, c.getString(
+                c.getColumnIndexOrThrow(ScriptureDbAdapter.VOLUME_TITLE)));
+        i.putExtra(ScriptureDbAdapter.VOLUME_TITLE_LONG, c.getString(
+                c.getColumnIndexOrThrow(ScriptureDbAdapter.VOLUME_TITLE_LONG)));
+        startActivityForResult(i, ACTIVITY_BROWSE_VOLUME);
+    }
+    
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+        if (resultCode == RESULT_OK && requestCode == ACTIVITY_PREFERENCES) {
+        	applyPreferences();
+        }
+    	fetchAllVolumes();
+    }
+    
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+    	boolean result = super.onCreateOptionsMenu(menu);
+    	
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+    	
+    	return result;
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle all of the possible menu actions.
+        switch (item.getItemId()) {
+        case R.id.open_preferences:
+        	openPreferences();
+        	break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+    
+    public void openPreferences(){
+        Intent i = new Intent(this, SetPreferencesActivity.class);
+        startActivityForResult(i, ACTIVITY_PREFERENCES);
+    }
+    
+}
