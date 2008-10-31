@@ -1,0 +1,8 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+	<item android:id="@+id/open_previous"
+		android:title="@string/previous_title" 
+		android:icon="@drawable/prev" android:numericShortcut="1"/>
+	<item android:id="@+id/open_next"
+		android:title="@string/next_title" 
+		android:icon="@drawable/next" android:numericShortcut="2"/>
+</menu>
