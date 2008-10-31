@@ -27,7 +27,7 @@ public class BrowseBookActivity extends ListActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTheme(android.R.style.Theme_Light);
+        setTheme(SetPreferencesActivity.getPreferedTheme(this));
         setContentView(R.layout.book_list);
 
         mTitleText = (TextView) findViewById(R.id.book_title);
@@ -136,13 +136,15 @@ public class BrowseBookActivity extends ListActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
-        Bundle extras = intent.getExtras();
-        
-        String goBackCommand = extras.getString(BrowseScriptureActivity.GO_BACK_COMMAND);
-        if(goBackCommand.equals(this.getClass().getName())){
-	    	populateList(extras);
-        } else {
-        	goBack(goBackCommand);
+        if(intent != null){
+	        Bundle extras = intent.getExtras();
+	        
+	        String goBackCommand = extras.getString(BrowseScriptureActivity.GO_BACK_COMMAND);
+	        if(goBackCommand.equals(this.getClass().getName())){
+		    	populateList(extras);
+	        } else {
+	        	goBack(goBackCommand);
+	        }
         }
     }
 

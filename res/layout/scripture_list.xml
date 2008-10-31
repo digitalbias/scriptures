@@ -1,16 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+	android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+  	<TextView android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+		android:layout_gravity="center_horizontal"
+		android:textSize="20px" 
+		android:textStyle="bold"
+        android:text="@string/app_name" 
+        android:layout_marginBottom="20px" 
+        android:layout_marginTop="20px"/>
 
 	<ListView android:id="@id/android:list"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"/>
         
   	<TextView android:id="@id/android:empty"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="fill_parent"
 		android:layout_gravity="center_horizontal"
         android:text="@string/no_volumes"/>
         

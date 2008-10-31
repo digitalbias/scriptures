@@ -11,28 +11,34 @@
               />
 
     <EditText android:id="@+id/databaseEntry" 
-              android:layout_width="fill_parent" 
               android:layout_height="wrap_content" 
               android:layout_below="@id/databaseText" 
-              />
+              android:layout_width="fill_parent"/>
   
-    <TextView android:id="@+id/themeText" 
-              android:layout_width="fill_parent" 
-              android:layout_height="wrap_content" 
-              android:text="Theme"
-              android:layout_below="@id/databaseEntry" 
-              />
+    <Button android:id="@+id/chooseFileButton" 
+    	android:layout_width="wrap_content" 
+    	android:layout_height="wrap_content"
+    	android:layout_below="@id/databaseEntry"
+		android:text="Choose file..."
+    	/>
+    	
+	<TextView android:id="@+id/themeText" 
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content" 
+        android:text="Theme"
+        android:layout_below="@id/chooseFileButton" 
+        />
 
-    <EditText android:id="@+id/themeEntry" 
-              android:layout_width="fill_parent" 
-              android:layout_height="wrap_content" 
-              android:layout_below="@id/themeText" 
-              />
-              
+	<Spinner android:id="@+id/themeSpinner" 
+			android:layout_below="@id/themeText" 
+			android:layout_width="fill_parent" 
+			android:layout_height="wrap_content"
+			/>
+
     <Button android:id="@+id/okButton" 
             android:layout_width="wrap_content" 
             android:layout_height="wrap_content" 
-            android:layout_below="@id/themeEntry"
+            android:layout_below="@id/themeSpinner"
             android:layout_alignParentRight="true"
             android:layout_marginLeft="10px"
             android:text="OK" />

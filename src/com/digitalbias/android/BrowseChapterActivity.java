@@ -7,6 +7,9 @@ import android.os.Bundle;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -26,7 +29,7 @@ public class BrowseChapterActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTheme(android.R.style.Theme_Light);
+        setTheme(SetPreferencesActivity.getPreferedTheme(this));
         setContentView(R.layout.chapter);
 
         mTitleText = (TextView) findViewById(R.id.chapter_title);
@@ -80,6 +83,40 @@ public class BrowseChapterActivity extends Activity {
         	}
         });
 
+    }
+    
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+    	boolean result = super.onCreateOptionsMenu(menu);
+    	
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.chapter_menu, menu);
+    	
+    	return result;
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle all of the possible menu actions.
+        switch (item.getItemId()) {
+	        case R.id.open_previous:
+	        	openPrevious();
+	        	break;
+	        case R.id.open_next:
+	        	openNext();
+	        	break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+    
+    public void openPrevious(){
+    	Bundle extras = mAdapter.getPreviousBookAndChapter(mBookId,mChapterId);
+    	populateList(extras);
+    }
+
+    public void openNext(){
+    	Bundle extras = mAdapter.getNextBookAndChapter(mBookId,mChapterId);
+    	populateList(extras);
     }
     
     private void goBack(String returnToClass){

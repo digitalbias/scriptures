@@ -25,7 +25,7 @@ public class BrowseVolumeActivity extends ListActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTheme(android.R.style.Theme_Light);
+        setTheme(SetPreferencesActivity.getPreferedTheme(this));
         setContentView(R.layout.volume_list);
 
         mTitleText = (TextView) findViewById(R.id.volume_title);
@@ -95,13 +95,15 @@ public class BrowseVolumeActivity extends ListActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
-        Bundle extras = intent.getExtras();
-    	
-        String goBackCommand = extras.getString(BrowseScriptureActivity.GO_BACK_COMMAND);
-        if(goBackCommand.equals(this.getClass().getName())){
-	    	populateList(extras);
-        } else {
-        	goBack(goBackCommand);
+        if(intent != null){
+	        Bundle extras = intent.getExtras();
+	    	
+	        String goBackCommand = extras.getString(BrowseScriptureActivity.GO_BACK_COMMAND);
+	        if(goBackCommand.equals(this.getClass().getName())){
+		    	populateList(extras);
+	        } else {
+	        	goBack(goBackCommand);
+	        }
         }
     }
 }

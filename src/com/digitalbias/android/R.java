@@ -8,29 +8,40 @@
 package com.digitalbias.android;
 
 public final class R {
+    public static final class array {
+        /**  Used in View/Spinner1.java 
+         */
+        public static final int themes=0x7f040000;
+    }
     public static final class attr {
     }
     public static final class drawable {
         public static final int icon=0x7f020000;
-        public static final int preferences_icon=0x7f020001;
+        public static final int next=0x7f020001;
+        public static final int preferences_icon=0x7f020002;
+        public static final int prev=0x7f020003;
     }
     public static final class id {
-        public static final int back_book=0x7f060004;
-        public static final int back_home=0x7f060000;
-        public static final int back_volume=0x7f060001;
-        public static final int book_subtitle=0x7f060003;
-        public static final int book_title=0x7f060002;
-        public static final int cancelButton=0x7f06000d;
-        public static final int chapter_title=0x7f060005;
-        public static final int databaseEntry=0x7f060009;
-        public static final int databaseText=0x7f060008;
-        public static final int okButton=0x7f06000c;
-        public static final int open_preferences=0x7f06000f;
-        public static final int text1=0x7f060007;
-        public static final int themeEntry=0x7f06000b;
-        public static final int themeText=0x7f06000a;
-        public static final int verses=0x7f060006;
-        public static final int volume_title=0x7f06000e;
+        public static final int back_book=0x7f070004;
+        public static final int back_home=0x7f070000;
+        public static final int back_volume=0x7f070001;
+        public static final int book_subtitle=0x7f070003;
+        public static final int book_title=0x7f070002;
+        public static final int cancelButton=0x7f07000e;
+        public static final int chapter_title=0x7f070005;
+        public static final int chooseFileButton=0x7f07000a;
+        public static final int databaseEntry=0x7f070009;
+        public static final int databaseText=0x7f070008;
+        public static final int okButton=0x7f07000d;
+        public static final int open_next=0x7f070012;
+        public static final int open_preferences=0x7f070013;
+        public static final int open_previous=0x7f070011;
+        public static final int text1=0x7f070007;
+        public static final int themeSpinner=0x7f07000c;
+        public static final int themeText=0x7f07000b;
+        public static final int title=0x7f07000f;
+        public static final int verses=0x7f070006;
+        public static final int volume_title=0x7f070010;
     }
     public static final class layout {
         public static final int book_list=0x7f030000;
@@ -44,14 +55,17 @@ public final class R {
         public static final int volume_list=0x7f030008;
     }
     public static final class menu {
-        public static final int menu=0x7f050000;
+        public static final int chapter_menu=0x7f060000;
+        public static final int menu=0x7f060001;
     }
     public static final class string {
-        public static final int app_name=0x7f040001;
-        public static final int hello=0x7f040000;
-        public static final int no_files=0x7f040003;
-        public static final int no_volumes=0x7f040002;
-        public static final int preferences_title=0x7f040005;
-        public static final int to_top=0x7f040004;
+        public static final int app_name=0x7f050001;
+        public static final int bad_database=0x7f050000;
+        public static final int next_title=0x7f050007;
+        public static final int no_files=0x7f050003;
+        public static final int no_volumes=0x7f050002;
+        public static final int preferences_title=0x7f050005;
+        public static final int previous_title=0x7f050006;
+        public static final int to_top=0x7f050004;
     }
 }

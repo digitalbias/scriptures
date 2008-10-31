@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
 
 public class ScriptureDbAdapter {
 
@@ -36,9 +37,11 @@ public class ScriptureDbAdapter {
 	private static final String VERSE_QUERY_STRING_FOR_VOLUME = "SELECT verse_id as _id, volume_id, book_id, chapter, verse, pilcrow, verse_scripture, verse_title, verse_title_short FROM lds_scriptures_verses WHERE volume_id = ? ORDER BY volume_id, book_id, chapter, verse";
 
 	private static final String SINGLE_VERSE_QUERY = "SELECT verse_id as _id, volume_id, book_id, chapter, verse, pilcrow, verse_scripture, verse_title, verse_title_short FROM lds_scriptures_verses WHERE _id = ?";
+	private static final String SINGLE_CHAPTER_QUERY_STRING = "SELECT DISTINCT v.chapter as _id, (b.book_title || ' ' || v.chapter) AS chapter_title, v.book_id as book_id FROM lds_scriptures_verses v, lds_scriptures_books b WHERE v.book_id = b.book_id AND v.book_id = ? AND v.chapter = ?";
 	private static final String SINGLE_BOOK_QUERY = "SELECT book_id as _id, volume_id, book_title, book_title_short, book_title_jst, book_subtitle, num_chapters FROM lds_scriptures_books WHERE _id = ? ORDER BY _id";
 	private static final String SINGLE_VOLUME_QUERY = "SELECT volume_id as _id, volume_title, volume_title_long FROM lds_scriptures_volumes WHERE _id = ?";
 	
+	private static final String GET_MAX_BOOK_ID = "SELECT MAX(book_id) AS book_id FROM lds_scriptures_books";
 	
     private final Context mCtx;
     private SQLiteDatabase mDatabase;
@@ -53,6 +56,12 @@ public class ScriptureDbAdapter {
      * @throws SQLException if the database cannot be opened.
      */
     public ScriptureDbAdapter open() {
+	    String databaseLocation = getDatabaseLocation();
+    	mDatabase = SQLiteDatabase.openDatabase(databaseLocation, null,  SQLiteDatabase.OPEN_READONLY);
+    	return this;
+    }
+    
+    public String getDatabaseLocation(){
 	    SharedPreferences settings = mCtx.getSharedPreferences(SetPreferencesActivity.PREFS_NAME, 0);
 	    String databaseLocation = settings.getString(SetPreferencesActivity.DATABASE_PREF, SetPreferencesActivity.DEFAULT_DATABASE_NAME);
 		
@@ -61,9 +70,12 @@ public class ScriptureDbAdapter {
 		    SetPreferencesActivity.resetDatabasePreferences(settings);
 		    databaseLocation = settings.getString(SetPreferencesActivity.DATABASE_PREF, SetPreferencesActivity.DEFAULT_DATABASE_NAME);
     	}
-
-    	mDatabase = SQLiteDatabase.openDatabase(databaseLocation, null,  SQLiteDatabase.OPEN_READONLY);
-    	return this;
+    	return databaseLocation;
+    }
+    
+    public boolean canMakeValidConnection(){
+    	File databaseFile = new File(getDatabaseLocation());
+    	return databaseFile.exists();
     }
 
     public void close() {
@@ -81,7 +93,83 @@ public class ScriptureDbAdapter {
         }
         return cursor;
     }
+    
+    protected Bundle fillChapterBundle(Long bookId, Long chapterId){
+    	Bundle bundle = new Bundle();
+    	
+    	bundle.putLong(TABLE_ID, chapterId);
+    	bundle.putLong(BOOK_ID, bookId);
+    	bundle.putString(CHAPTER_TITLE, getChapterTitle(bookId,chapterId));
+    	bundle.putString(BOOK_TITLE_SHORT, getBookTitle(bookId));
+    	bundle.putString(VOLUME_TITLE, getVolumeTitle(bookId));
+    	
+    	return bundle;
+    }
+    
+    protected String getChapterTitle(Long bookId, Long chapterId){
+    	Cursor cursor = fetchSingleChapter(bookId.toString(), chapterId.toString());
+    	String result = cursor.getString(cursor.getColumnIndexOrThrow(CHAPTER_TITLE));
+    	cursor.close();
+    	return result;
+    }
+    
+    protected String getBookTitle(Long bookId){
+    	Cursor cursor = fetchSingleBook(bookId.toString());
+    	String result = cursor.getString(cursor.getColumnIndexOrThrow(BOOK_TITLE_SHORT));
+    	cursor.close();
+    	return result;
+    }
+    
+    protected String getVolumeTitle(Long bookId){
+    	Cursor cursor = fetchSingleBook(bookId.toString());
+    	Long volumeId = cursor.getLong(cursor.getColumnIndexOrThrow(VOLUME_ID));
+    	cursor = fetchSingleVolume(volumeId.toString());
+    	String result = cursor.getString(cursor.getColumnIndexOrThrow(VOLUME_TITLE_LONG));
+    	cursor.close();
+    	return result;
+    }
+    
+    protected Long getMaxBookId(){
+    	Cursor cursor = queryAndMoveToFirst(GET_MAX_BOOK_ID, null);
+    	Long result = cursor.getLong(cursor.getColumnIndexOrThrow(BOOK_ID));
+    	cursor.close();
+    	return result;
+    }
+    
+    public Bundle getPreviousBookAndChapter(Long bookId, Long chapterId){
+    	if(chapterId.intValue() == 1){
+    		if(bookId == 1){
+    			bookId = getMaxBookId();
+    		} else {
+    			bookId = bookId - 1;
+    		}
+        	Cursor bookQuery = fetchSingleBook(bookId.toString());
+    		chapterId = bookQuery.getLong(bookQuery.getColumnIndexOrThrow(BOOK_NUM_CHAPTERS));
+    		bookQuery.close();
+    	} else {
+    		chapterId = chapterId - 1;
+    	}
+    	return fillChapterBundle(bookId, chapterId);
+    }
 
+    public Bundle getNextBookAndChapter(Long bookId, Long chapterId){
+    	Cursor bookQuery = fetchSingleBook(bookId.toString());
+    	Long numChapters = bookQuery.getLong(bookQuery.getColumnIndexOrThrow(BOOK_NUM_CHAPTERS));
+    	bookQuery.close();
+    	if(chapterId.equals(numChapters)){
+    		Long maxBookId = getMaxBookId();
+    		if(bookId.equals(maxBookId)){
+    			bookId = Long.valueOf(1);
+    			chapterId = Long.valueOf(1);
+    		} else {
+    			bookId = bookId + 1;
+    		}
+    	} else {
+    		numChapters = numChapters + 1;
+    	}
+    	return fillChapterBundle(bookId, chapterId);
+    }
+    
     public Cursor fetchAllVolumes(){
         return queryAndMoveToFirst(VOLUME_QUERY_STRING, null);
     }
@@ -109,6 +197,11 @@ public class ScriptureDbAdapter {
     public Cursor fetchSingleVerse(String id){
     	String[] args = new String[] {id};
     	return queryAndMoveToFirst(SINGLE_VERSE_QUERY, args);
+    }
+
+    public Cursor fetchSingleChapter(String bookId, String chapterId){
+    	String[] args = new String[] {bookId, chapterId};
+    	return queryAndMoveToFirst(SINGLE_CHAPTER_QUERY_STRING, args);
     }
 
     public Cursor fetchSingleBook(String id){

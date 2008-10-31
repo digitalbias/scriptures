@@ -28,21 +28,22 @@ public class BrowseScriptureActivity extends ListActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         applyPreferences();
-    	fetchAllVolumes();
+        if(mAdapter.canMakeValidConnection()){
+	    	fetchAllVolumes();
+        }
     }
     
     protected void applyPreferences() throws SQLiteException {
-        setTheme(android.R.style.Theme_Light);
-        setContentView(R.layout.scripture_list);
+        setTheme(SetPreferencesActivity.getPreferedTheme(this));
         if(mAdapter != null) {
         	mAdapter.close();
-        	mAdapter = null;
         }
         mAdapter = new ScriptureDbAdapter(this);
-		mAdapter.open();
+        setContentView(R.layout.scripture_list);
     }
     
     private void fetchAllVolumes(){
+		mAdapter.open();
     	mVolumeCursor = mAdapter.fetchAllVolumes();
     	startManagingCursor(mVolumeCursor);
     	String[] from = new String[] { ScriptureDbAdapter.VOLUME_TITLE };

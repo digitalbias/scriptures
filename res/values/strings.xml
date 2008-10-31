@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Hello World, ScriptureActivity</string>
+    <string name="bad_database">The location for the database is not valid. Please choose a valid scripture database location.</string>
     <string name="app_name">Scriptures</string>
 	<string name="no_volumes">There are no scriptures to be loaded.</string>
     <string name="no_files">This directory is empty</string>
     <string name="to_top">[Back to Top]</string>
 	<string name="preferences_title">Preferences</string>
+	<string name="previous_title">Previous</string>
+	<string name="next_title">Next</string>
 </resources>
