@@ -7,7 +7,9 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
+import android.util.Log;
 
 public class ScriptureDbAdapter {
 
@@ -30,18 +32,20 @@ public class ScriptureDbAdapter {
     public static final String VERSE_TEXT = "verse_scripture";
     public static final String VERSE_PILCROW = "pilcrow";
     
-	private static final String VOLUME_QUERY_STRING = "SELECT volume_id as _id, volume_title, volume_title_long FROM lds_scriptures_volumes ORDER BY _id";
-	private static final String BOOK_QUERY_STRING = "SELECT book_id as _id, book_title, book_title_short, book_title_jst, book_subtitle, num_chapters FROM lds_scriptures_books WHERE volume_id = ? ORDER BY _id";
-	private static final String CHAPTER_QUERY_STRING = "SELECT DISTINCT v.chapter as _id, (b.book_title || ' ' || v.chapter) AS chapter_title, v.book_id as book_id FROM lds_scriptures_verses v, lds_scriptures_books b WHERE v.book_id = b.book_id AND v.book_id = ? ";
-	private static final String VERSE_QUERY_STRING_FOR_BOOKS = "SELECT verse_id as _id, volume_id, book_id, chapter, verse, pilcrow, verse_scripture, verse_title, verse_title_short FROM lds_scriptures_verses WHERE book_id = ? AND chapter = ? ORDER BY volume_id, book_id, chapter, verse";
-	private static final String VERSE_QUERY_STRING_FOR_VOLUME = "SELECT verse_id as _id, volume_id, book_id, chapter, verse, pilcrow, verse_scripture, verse_title, verse_title_short FROM lds_scriptures_verses WHERE volume_id = ? ORDER BY volume_id, book_id, chapter, verse";
+    private static final String VALIDATAION_QUERY = "SELECT COUNT(*) as book_count FROM sqlite_master WHERE name = 'books'";
+    
+	private static final String VOLUME_QUERY_STRING = "SELECT volume_id as _id, volume_title, volume_title_long FROM volumes ORDER BY _id";
+	private static final String BOOK_QUERY_STRING = "SELECT book_id as _id, book_title, book_title_short, book_title_jst, book_subtitle, num_chapters FROM books WHERE volume_id = ? ORDER BY _id";
+	private static final String CHAPTER_QUERY_STRING = "SELECT DISTINCT v.chapter as _id, (b.book_title || ' ' || v.chapter) AS chapter_title, v.book_id as book_id FROM verses v, books b WHERE v.book_id = b.book_id AND v.book_id = ? ";
+	private static final String VERSE_QUERY_STRING_FOR_BOOKS = "SELECT verse_id as _id, volume_id, book_id, chapter, verse, pilcrow, verse_scripture, verse_title, verse_title_short FROM verses WHERE book_id = ? AND chapter = ? ORDER BY volume_id, book_id, chapter, verse";
+	private static final String VERSE_QUERY_STRING_FOR_VOLUME = "SELECT verse_id as _id, volume_id, book_id, chapter, verse, pilcrow, verse_scripture, verse_title, verse_title_short FROM verses WHERE volume_id = ? ORDER BY volume_id, book_id, chapter, verse";
 
-	private static final String SINGLE_VERSE_QUERY = "SELECT verse_id as _id, volume_id, book_id, chapter, verse, pilcrow, verse_scripture, verse_title, verse_title_short FROM lds_scriptures_verses WHERE _id = ?";
-	private static final String SINGLE_CHAPTER_QUERY_STRING = "SELECT DISTINCT v.chapter as _id, (b.book_title || ' ' || v.chapter) AS chapter_title, v.book_id as book_id FROM lds_scriptures_verses v, lds_scriptures_books b WHERE v.book_id = b.book_id AND v.book_id = ? AND v.chapter = ?";
-	private static final String SINGLE_BOOK_QUERY = "SELECT book_id as _id, volume_id, book_title, book_title_short, book_title_jst, book_subtitle, num_chapters FROM lds_scriptures_books WHERE _id = ? ORDER BY _id";
-	private static final String SINGLE_VOLUME_QUERY = "SELECT volume_id as _id, volume_title, volume_title_long FROM lds_scriptures_volumes WHERE _id = ?";
+	private static final String SINGLE_VERSE_QUERY = "SELECT verse_id as _id, volume_id, book_id, chapter, verse, pilcrow, verse_scripture, verse_title, verse_title_short FROM verses WHERE _id = ?";
+	private static final String SINGLE_CHAPTER_QUERY_STRING = "SELECT DISTINCT v.chapter as _id, (b.book_title || ' ' || v.chapter) AS chapter_title, v.book_id as book_id FROM verses v, books b WHERE v.book_id = b.book_id AND v.book_id = ? AND v.chapter = ?";
+	private static final String SINGLE_BOOK_QUERY = "SELECT book_id as _id, volume_id, book_title, book_title_short, book_title_jst, book_subtitle, num_chapters FROM books WHERE _id = ? ORDER BY _id";
+	private static final String SINGLE_VOLUME_QUERY = "SELECT volume_id as _id, volume_title, volume_title_long FROM volumes WHERE _id = ?";
 	
-	private static final String GET_MAX_BOOK_ID = "SELECT MAX(book_id) AS book_id FROM lds_scriptures_books";
+	private static final String GET_MAX_BOOK_ID = "SELECT MAX(book_id) AS book_id FROM books";
 	
     private final Context mCtx;
     private SQLiteDatabase mDatabase;
@@ -57,7 +61,7 @@ public class ScriptureDbAdapter {
      */
     public ScriptureDbAdapter open() {
 	    String databaseLocation = getDatabaseLocation();
-    	mDatabase = SQLiteDatabase.openDatabase(databaseLocation, null,  SQLiteDatabase.OPEN_READONLY);
+    	mDatabase = SQLiteDatabase.openDatabase(databaseLocation, null,  SQLiteDatabase.OPEN_READWRITE);
     	return this;
     }
     
@@ -74,8 +78,33 @@ public class ScriptureDbAdapter {
     }
     
     public boolean canMakeValidConnection(){
+    	boolean result = false;
     	File databaseFile = new File(getDatabaseLocation());
-    	return databaseFile.exists();
+    	if (databaseFile.exists()){
+    		Log.i("db", "file exists");
+    		result = isValidDatabase();
+    	}
+    	return result;
+    }
+    
+    protected boolean isValidDatabase(){
+    	boolean result = false;
+    	SQLiteDatabase database = null;
+    	Cursor cursor = null;
+    	try {
+	    	database = SQLiteDatabase.openDatabase(getDatabaseLocation(), null, SQLiteDatabase.OPEN_READONLY);
+	    	cursor = database.rawQuery(VALIDATAION_QUERY, null);
+	    	cursor.moveToFirst();
+	    	int book_count = cursor.getInt(cursor.getColumnIndexOrThrow("book_count")); 
+	    	result = book_count >= 1;
+    		Log.i("db", Integer.toString(book_count));
+    	} catch (SQLiteException e){
+    		Log.e("db", "sqlite exception", e);
+    	} finally {
+	    	if(cursor != null) cursor.close();
+	    	if(database != null) database.close();
+    	}
+    	return result;
     }
 
     public void close() {
@@ -109,14 +138,12 @@ public class ScriptureDbAdapter {
     protected String getChapterTitle(Long bookId, Long chapterId){
     	Cursor cursor = fetchSingleChapter(bookId.toString(), chapterId.toString());
     	String result = cursor.getString(cursor.getColumnIndexOrThrow(CHAPTER_TITLE));
-    	cursor.close();
     	return result;
     }
     
     protected String getBookTitle(Long bookId){
     	Cursor cursor = fetchSingleBook(bookId.toString());
     	String result = cursor.getString(cursor.getColumnIndexOrThrow(BOOK_TITLE_SHORT));
-    	cursor.close();
     	return result;
     }
     
@@ -125,14 +152,12 @@ public class ScriptureDbAdapter {
     	Long volumeId = cursor.getLong(cursor.getColumnIndexOrThrow(VOLUME_ID));
     	cursor = fetchSingleVolume(volumeId.toString());
     	String result = cursor.getString(cursor.getColumnIndexOrThrow(VOLUME_TITLE_LONG));
-    	cursor.close();
     	return result;
     }
     
     protected Long getMaxBookId(){
     	Cursor cursor = queryAndMoveToFirst(GET_MAX_BOOK_ID, null);
     	Long result = cursor.getLong(cursor.getColumnIndexOrThrow(BOOK_ID));
-    	cursor.close();
     	return result;
     }
     
@@ -145,7 +170,6 @@ public class ScriptureDbAdapter {
     		}
         	Cursor bookQuery = fetchSingleBook(bookId.toString());
     		chapterId = bookQuery.getLong(bookQuery.getColumnIndexOrThrow(BOOK_NUM_CHAPTERS));
-    		bookQuery.close();
     	} else {
     		chapterId = chapterId - 1;
     	}
@@ -155,18 +179,20 @@ public class ScriptureDbAdapter {
     public Bundle getNextBookAndChapter(Long bookId, Long chapterId){
     	Cursor bookQuery = fetchSingleBook(bookId.toString());
     	Long numChapters = bookQuery.getLong(bookQuery.getColumnIndexOrThrow(BOOK_NUM_CHAPTERS));
-    	bookQuery.close();
     	if(chapterId.equals(numChapters)){
     		Long maxBookId = getMaxBookId();
     		if(bookId.equals(maxBookId)){
     			bookId = Long.valueOf(1);
-    			chapterId = Long.valueOf(1);
     		} else {
     			bookId = bookId + 1;
     		}
+			chapterId = Long.valueOf(1);
     	} else {
-    		numChapters = numChapters + 1;
+    		chapterId = chapterId + 1;
     	}
+    	//Log.d("ScriptureDB", "chapterId:" + chapterId.toString());
+    	//Log.d("ScriptureDB", "bookId: " + bookId.toString());
+    	
     	return fillChapterBundle(bookId, chapterId);
     }
     

@@ -16,6 +16,7 @@ import android.widget.ListView;
 public class FileList extends ListActivity {
 	
 	private List<String> items = null;
+	private File mCurrentDirectory = null;
 
     /** Called when the activity is first created. */
     @Override
@@ -27,10 +28,10 @@ public class FileList extends ListActivity {
     	String databaseLocation = extras.getString(SetPreferencesActivity.DATABASE_PREF);
         try {
         	File file = new File(databaseLocation);
-        	file = file.getParentFile();
-        	fill(file.listFiles());
+        	mCurrentDirectory = file.getParentFile();
+        	fill(mCurrentDirectory.listFiles());
         } catch (Exception e){
-            fill(new File("/").listFiles());
+        	fillWithRoot();
         }
     }
     
@@ -41,9 +42,10 @@ public class FileList extends ListActivity {
 			fillWithRoot();
 		} else {
 			File file = new File(items.get(position));
-			if (file.isDirectory())
+			if (file.isDirectory()){
+				mCurrentDirectory = file;
 				fill(file.listFiles());
-			else {
+			} else {
 				String filePath = "";
 				try {
 					filePath = file.getCanonicalPath();
@@ -66,16 +68,19 @@ public class FileList extends ListActivity {
 	}
 
     private void fillWithRoot() {
-    	fill(new File("/").listFiles());
+    	mCurrentDirectory = new File("/");
+        fill(mCurrentDirectory.listFiles());
     }
 
 	private void fill(File[] files) {
 		items = new ArrayList<String>();
 		items.add(getString(R.string.to_top));
+		if(mCurrentDirectory.getParentFile() != null){
+			items.add(mCurrentDirectory.getParentFile().getPath());
+		}
 		for (File file : files)
 			items.add(file.getPath());
-		ArrayAdapter<String> fileList = new ArrayAdapter<String>(this,
-				R.layout.file_row, items);
+		ArrayAdapter<String> fileList = new ArrayAdapter<String>(this, R.layout.file_row, items);
 		setListAdapter(fileList);
 	}
 }

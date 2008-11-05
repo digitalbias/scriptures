@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="fill_parent" 
+    android:orientation="vertical">
+
+	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content" 
+	    android:orientation="horizontal">
+
+		<Button android:id="@+id/done_button" 
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content" 
+			android:text="Done"/>
+
+		<Button android:id="@+id/refresh_button" 
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content" 
+			android:text="Refresh"/>
+
+	</LinearLayout>
+	
+	<ProgressBar 
+		android:id="@+id/progress" 
+    	style="?android:attr/progressBarStyleHorizontal"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content" 
+		android:visibility="gone"
+		/>
+
+	<TextView android:id="@+id/volume_title" 
+		android:layout_width="fill_parent" 
+		android:layout_height="wrap_content" 
+		android:text="Download Database" 
+		android:layout_gravity="center_horizontal"
+		android:textSize="20px" 
+		android:textStyle="bold" 
+		android:gravity="center"/>
+		
+	<ListView android:id="@id/android:list"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"/>
+        
+  	<TextView android:id="@id/android:empty"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+		android:layout_gravity="center_horizontal"
+        android:text="@string/no_downloads"/>
+        
+</LinearLayout>

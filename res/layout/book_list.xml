@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content" 
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" 
     android:orientation="vertical">
 
 	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	    android:layout_width="wrap_content"
+	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content" 
 	    android:orientation="horizontal">
 
@@ -23,7 +23,7 @@
 	</LinearLayout>
 
 	<TextView android:id="@+id/book_title" 
-		android:layout_width="wrap_content" 
+		android:layout_width="fill_parent" 
 		android:layout_height="wrap_content" 
 		android:text="Title" 
 		android:layout_gravity="center_horizontal"
@@ -31,7 +31,7 @@
 		android:textStyle="bold"/>
 		
 	<TextView android:id="@+id/book_subtitle" 
-		android:layout_width="wrap_content" 
+		android:layout_width="fill_parent" 
 		android:layout_height="wrap_content" 
 		android:text="Long Title" 
 		android:layout_gravity="center_horizontal"
@@ -39,11 +39,11 @@
 		/>
 	
 	<ListView android:id="@id/android:list"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"/>
         
   	<TextView android:id="@id/android:empty"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
 		android:layout_gravity="center_horizontal"
         android:text="@string/no_volumes"/>

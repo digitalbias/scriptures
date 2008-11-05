@@ -1,0 +1,8 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+	<item android:id="@+id/open_preferences"
+		android:title="@string/preferences_title" 
+		android:icon="@drawable/preferences_icon" android:numericShortcut="1"/>
+	<item android:id="@+id/download_database"
+		android:title="@string/download_title" 
+		android:icon="@drawable/download" android:numericShortcut="2"/>
+</menu>

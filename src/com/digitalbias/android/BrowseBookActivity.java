@@ -121,7 +121,7 @@ public class BrowseBookActivity extends ListActivity {
     	super.onListItemClick(l, v, position, id);
         Cursor c = mCursor;
         c.moveToPosition(position);
-        Intent i = new Intent(this, BrowseChapterActivity.class);
+        Intent i = new Intent(this, ReadChapterActivity.class);
         i.putExtra(ScriptureDbAdapter.TABLE_ID, id);
         i.putExtra(ScriptureDbAdapter.BOOK_TITLE, mTitleText.getText());
         i.putExtra(ScriptureDbAdapter.BOOK_ID, mBookId);
