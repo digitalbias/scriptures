@@ -16,7 +16,7 @@ public class BrowseBookActivity extends ListActivity {
 	private Cursor mCursor;
 	private Long mBookId;
 
-	private static final int ACTIVITY_BROWSE_CHAPTER = 0;
+	private static final int ACTIVITY_READ_CHAPTER = 0;
 
     private TextView mTitleText;
     private TextView mSubTitleText;
@@ -130,7 +130,7 @@ public class BrowseBookActivity extends ListActivity {
         i.putExtra(ScriptureDbAdapter.CHAPTER_TITLE, c.getString(
                 c.getColumnIndexOrThrow(ScriptureDbAdapter.CHAPTER_TITLE)));
         
-        startActivityForResult(i, ACTIVITY_BROWSE_CHAPTER);
+        startActivityForResult(i, ACTIVITY_READ_CHAPTER);
     }
     
     @Override

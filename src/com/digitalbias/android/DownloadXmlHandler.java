@@ -11,6 +11,12 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -36,14 +42,33 @@ public class DownloadXmlHandler extends DefaultHandler {
 	public void createDatabaseList(Context context, String uri){
 		try {
 
-			URL url = new URL(uri);
-			InputStream is = url.openStream(); 
+	        HttpGet get = new HttpGet(uri);
+
+	        HttpEntity entity = null;
+	        InputStream in = null;
+	        try {
+	        	HttpClient client = new DefaultHttpClient();
+	            final HttpResponse response = client.execute(get);
+	            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+	                entity = response.getEntity();
+	                in = entity.getContent();
+	                
+	    	    	SAXParserFactory spf = SAXParserFactory.newInstance();
+	    	    	SAXParser sp = spf.newSAXParser();
+	    	    	XMLReader xr = sp.getXMLReader();
+	    	    	xr.setContentHandler(this);
+	                xr.parse(new InputSource(in));
+	            }
+	        } finally {
+		        if (in != null) {
+		            try {
+		                in.close();
+		            } catch (IOException e) {
+		                Log.e(BrowseScriptureActivity.TAG, "Could not close stream", e);
+		            }
+		        }
+	        }
 			
-	    	SAXParserFactory spf = SAXParserFactory.newInstance();
-	    	SAXParser sp = spf.newSAXParser();
-	    	XMLReader xr = sp.getXMLReader();
-	    	xr.setContentHandler(this);
-            xr.parse(new InputSource(is));
 		} catch (MalformedURLException e){
 			Log.e(BrowseScriptureActivity.TAG, uri, e);
 		} catch (IOException e) {

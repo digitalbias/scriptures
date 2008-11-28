@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/scripture_layout"
+	android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <TextView android:id="@+id/bookmark_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Bookmark: " 
+        />
+
+    <TextView android:id="@+id/location_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Gen1.1" 
+    	android:layout_toRightOf="@id/bookmark_text"
+        />
+        
+  	<TextView android:id="@+id/title_text"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+		android:layout_gravity="center_horizontal"
+        android:layout_below="@id/location_text"
+        android:text="Title:" 
+        />
+        
+  	<EditText android:id="@+id/title_edit"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+		android:layout_gravity="center_horizontal"
+        android:layout_below="@id/title_text"
+        />
+
+    <Button android:id="@+id/ok_button" 
+    	android:layout_width="wrap_content" 
+    	android:layout_height="wrap_content"
+        android:layout_below="@id/title_edit"
+        android:layout_alignParentRight="true"
+    	android:text="Ok"
+    	/>
+
+    <Button android:id="@+id/cancel_button" 
+    	android:layout_width="wrap_content" 
+    	android:layout_height="wrap_content"
+        android:layout_below="@id/title_edit"
+    	android:layout_toLeftOf="@id/ok_button"
+    	android:text="Cancel"
+    	/>
+    	
+</RelativeLayout>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/bookmark_layout"
+	android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+<TextView android:id="@+id/chapter_title"
+    android:layout_height="wrap_content" 
+    android:layout_width="wrap_content"
+    android:textSize="15px" 
+    android:height="35px" 
+    android:gravity="center_vertical"
+   	android:text="Ok"
+    android:layout_margin="5px" 
+    android:padding="2px"/>
+
+<TextView android:id="@+id/title"
+    android:layout_height="wrap_content" 
+    android:layout_width="wrap_content"
+    android:textSize="15px" 
+    android:height="35px" 
+    android:gravity="center_vertical"
+   	android:text="Ok"
+  	android:layout_toRightOf="@id/chapter_title" 
+  	android:layout_margin="5px" 
+  	android:padding="2px"/>
+    
+<!-- 
+<Button android:id="@+id/delete_button"
+    android:layout_height="wrap_content" 
+    android:layout_width="wrap_content"
+    android:textSize="15px" 
+    android:height="35px" 
+    android:layout_alignParentRight="true"
+    android:text="Delete" 
+    android:gravity="center_vertical|center_horizontal"/>
+    
+<Button android:id="@+id/edit_button"
+    android:layout_height="wrap_content" 
+    android:layout_width="wrap_content"
+    android:textSize="15px" 
+    android:height="35px" 
+    android:text="Edit" 
+    android:layout_toLeftOf="@id/delete_button"
+    />
+-->
+</RelativeLayout>

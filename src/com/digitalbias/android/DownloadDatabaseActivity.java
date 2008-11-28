@@ -20,24 +20,33 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 public class DownloadDatabaseActivity extends ListActivity {
 	
 	private List<DatabaseLocation> mDatabaseList;
-//	private static final String DATABASE_LIST_URI = "http://scriptures.digitalbias.com/scripture_list.xml";
+	private static final String DATABASE_LIST_URI = "http://scriptures.digitalbias.com/scripture_list.xml";
 //	private static final String DATABASE_LIST_URI = "http://androidscriptures.googlecode.com/files/scripture_list.xml.xml";
-	private static final String DATABASE_LIST_URI = "http://www.mediafire.com/file/jyzbdngleji/scripture_list.xml";
+//	private static final String DATABASE_LIST_URI = "http://www.mediafire.com/file/jyzbdngleji/scripture_list.xml";
     private static final int IO_BUFFER_SIZE = 4 * 1024;
     private ProgressBar mProgressBar;
+    private TextView mTextView;
+    private Button mDoneButton;
+    private Button mRefreshButton;
+    ProgressDialog mProgressDialog;
 	
 	private class DownloadFilesTask extends UserTask<Object, Integer, File> {
 	    private int mProgress;
@@ -66,6 +75,7 @@ public class DownloadDatabaseActivity extends ListActivity {
 		
 		public void setProgressPercent(int progressPercent){
 			mProgressBar.setProgress(progressPercent);
+			mProgressDialog.setProgress(progressPercent);
 		}
 		
 		public void onPostExecute(File result) {
@@ -74,7 +84,12 @@ public class DownloadDatabaseActivity extends ListActivity {
 		}
 
 	    public void downloadFile(File destinationFile, URL url) throws IOException {
-	    	if(!destinationFile.exists()) destinationFile.createNewFile();
+	    	if(!destinationFile.exists()) {
+	    		if(!destinationFile.getParentFile().exists()){
+	    			destinationFile.getParentFile().mkdirs();
+	    		}
+	    		destinationFile.createNewFile();
+	    	}
 
 	    	BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(destinationFile), IO_BUFFER_SIZE);
 	        HttpGet get = new HttpGet(url.toString());
@@ -125,23 +140,56 @@ public class DownloadDatabaseActivity extends ListActivity {
 //            final Animation fadeOut = AnimationUtils.loadAnimation(this, R.anim.fade_out);
             mProgressBar.setVisibility(View.GONE);
 //            mProgressBar.startAnimation(fadeOut);
+            mDoneButton.setEnabled(true);
+            mRefreshButton.setEnabled(true);
+//          android:layout_below="@id/toolbar"
+//    		android:layout_width="fill_parent" 
+//    		android:layout_height="wrap_content" 
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(mTextView.getLayoutParams());
+            params.addRule(RelativeLayout.BELOW, R.id.toolbar);
+            mTextView.setLayoutParams(params);
         }
+        mProgressDialog.hide();
+    	AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setMessage("Download complete");
+		builder.setTitle("Download complete");
+		builder.setPositiveButton("Ok", new DialogInterface.OnClickListener(){
+			public void onClick(DialogInterface dialog, int which){
+			}
+		});
+		builder.setCancelable(true);
+		AlertDialog dialog = builder.create();
+		dialog.show();
     }
 
     private void showProgress() {
         if (mProgressBar.getVisibility() != View.VISIBLE) {
-//            final Animation fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in);
+            final Animation fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_down);
             mProgressBar.setVisibility(View.VISIBLE);
-//            mProgressBar.startAnimation(fadeIn);
+            mProgressBar.startAnimation(fadeIn);
+            mDoneButton.setEnabled(false);
+            mRefreshButton.setEnabled(false);
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(mTextView.getLayoutParams());
+            params.addRule(RelativeLayout.BELOW, R.id.progress);
+            mTextView.setLayoutParams(params);
         }
+        mProgressDialog = new ProgressDialog(this);
+        mProgressDialog.setTitle("Downloading...");
+        mProgressDialog.setMessage("Downloading...");
+        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        mProgressDialog.setMax(100);
+        mProgressDialog.setProgress(0);
+        mProgressDialog.setCancelable(false);
+		mProgressDialog.show();
     }
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTheme(SetPreferencesActivity.getPreferedTheme(this));
         setContentView(R.layout.database_dialog);
-        Button button = (Button) findViewById(R.id.done_button);
-        button.setOnClickListener(new View.OnClickListener() {
+        mTextView = (TextView) findViewById(R.id.title);
+        mDoneButton = (Button) findViewById(R.id.done_button);
+        mDoneButton.setOnClickListener(new View.OnClickListener() {
         	public void onClick(View view){
                 Bundle bundle = new Bundle();
                 Intent intent = new Intent();
@@ -150,8 +198,8 @@ public class DownloadDatabaseActivity extends ListActivity {
                 finish();
         	}
         });
-        button = (Button) findViewById(R.id.refresh_button);
-        button.setOnClickListener(new View.OnClickListener() {
+        mRefreshButton = (Button) findViewById(R.id.refresh_button);
+        mRefreshButton.setOnClickListener(new View.OnClickListener() {
         	public void onClick(View view){
         		setupList();
         	}
@@ -163,8 +211,6 @@ public class DownloadDatabaseActivity extends ListActivity {
 	
     protected void setupList(){
         mDatabaseList = getDatabaseList();
-    	
-//    	ArrayAdapter adapter = new SimpleCursorAdapter(this, R.layout.scripture_row, mVolumeCursor, from, to);
     	ArrayAdapter<DatabaseLocation> adapter = new ArrayAdapter<DatabaseLocation>(this, R.layout.scripture_row, mDatabaseList);
     	setListAdapter(adapter);
     }

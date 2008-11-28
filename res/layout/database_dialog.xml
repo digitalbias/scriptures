@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
-    android:layout_height="fill_parent" 
-    android:orientation="vertical">
+    android:layout_height="fill_parent" >
 
 	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	    android:id="@+id/toolbar"
 	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content" 
 	    android:orientation="horizontal">
@@ -24,13 +24,15 @@
 	
 	<ProgressBar 
 		android:id="@+id/progress" 
+        android:layout_below="@id/toolbar"
     	style="?android:attr/progressBarStyleHorizontal"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content" 
 		android:visibility="gone"
 		/>
 
-	<TextView android:id="@+id/volume_title" 
+	<TextView android:id="@+id/title" 
+        android:layout_below="@id/toolbar"
 		android:layout_width="fill_parent" 
 		android:layout_height="wrap_content" 
 		android:text="Download Database" 
@@ -40,13 +42,15 @@
 		android:gravity="center"/>
 		
 	<ListView android:id="@id/android:list"
+        android:layout_below="@id/title"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"/>
         
   	<TextView android:id="@id/android:empty"
+        android:layout_below="@id/title"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
 		android:layout_gravity="center_horizontal"
         android:text="@string/no_downloads"/>
         
-</LinearLayout>
+</RelativeLayout>

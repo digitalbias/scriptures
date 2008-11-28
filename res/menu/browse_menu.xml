@@ -5,4 +5,7 @@
 	<item android:id="@+id/download_database"
 		android:title="@string/download_title" 
 		android:icon="@drawable/download" android:numericShortcut="2"/>
+	<item android:id="@+id/manage_bookmarks"
+		android:title="@string/bookmarks_title" 
+		android:icon="@drawable/bookmarks" android:numericShortcut="3"/>
 </menu>

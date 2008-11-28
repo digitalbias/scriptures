@@ -30,9 +30,9 @@ public class SetPreferencesActivity extends Activity {
 	protected static final int MEDIUM_FONT = 1;
 	protected static final int LARGE_FONT = 2;
 
-	protected static final int SMALL_FONT_SIZE = 12;
+	protected static final int SMALL_FONT_SIZE = 13;
 	protected static final int MEDIUM_FONT_SIZE = 18;
-	protected static final int LARGE_FONT_SIZE = 23;
+	protected static final int LARGE_FONT_SIZE = 21;
 
 	protected static final int CHOOSE_FILE_ACTIVITY = 0;
 	

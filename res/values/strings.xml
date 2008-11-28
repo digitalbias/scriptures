@@ -3,6 +3,7 @@
     <string name="bad_database">The location for the database is not valid. Please choose a valid scripture database location.</string>
     <string name="app_name">Scriptures</string>
 	<string name="no_volumes">There are no scriptures to be loaded.</string>
+	<string name="no_bookmarks">There are no bookmarks.</string>
 	<string name="no_downloads">Download service may not be reachable.</string>
     <string name="no_files">This directory is empty</string>
     <string name="to_top">/</string>
@@ -10,6 +11,8 @@
 	<string name="download_title">Download</string>
 	<string name="previous_title">Previous</string>
 	<string name="next_title">Next</string>
+	<string name="add_bookmark">Add Bookmark</string>
+	<string name="bookmarks_title">Bookmarks</string>
 	
     <string name="download_activity_title">Downloading</string>
     <string name="download_activity_cancel">Cancel Download</string>

@@ -23,6 +23,7 @@ public class BrowseScriptureActivity extends ListActivity {
 	private static final int ACTIVITY_BROWSE_VOLUME = 0;
 	private static final int ACTIVITY_PREFERENCES = 1;
 	private static final int ACTIVITY_DOWNLOAD = 2;
+	private static final int ACTIVITY_BOOKMARK = 3;
 	
 	private Cursor mVolumeCursor;
 	private ScriptureDbAdapter mAdapter;
@@ -32,14 +33,28 @@ public class BrowseScriptureActivity extends ListActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         applyPreferences();
+        initializeDatabase();
         if(mAdapter.canMakeValidConnection()){
 	    	fetchAllVolumes();
         } else {
         	getGoodDatabase();
         }
+        closeDatabase();
     }
     
-    protected void getGoodDatabase(){
+    private void initializeDatabase() {
+        if(mAdapter != null) {
+        	mAdapter.close();
+        }
+        mAdapter = new ScriptureDbAdapter(this);
+	}
+
+    private void closeDatabase() {
+        mAdapter.close();
+        mAdapter = null;
+	}
+
+	protected void getGoodDatabase(){
     	showDownloadDialog();
     }
     
@@ -68,12 +83,13 @@ public class BrowseScriptureActivity extends ListActivity {
         startActivityForResult(i, ACTIVITY_DOWNLOAD);
     }
     
+    protected void startManageBookmarks(){
+        Intent i = new Intent(this, ManageBookmarksActivity.class);
+        startActivityForResult(i, ACTIVITY_BOOKMARK);
+    }
+    
     protected void applyPreferences() throws SQLiteException {
         setTheme(SetPreferencesActivity.getPreferedTheme(this));
-        if(mAdapter != null) {
-        	mAdapter.close();
-        }
-        mAdapter = new ScriptureDbAdapter(this);
         setContentView(R.layout.scripture_list);
     }
     
@@ -109,6 +125,7 @@ public class BrowseScriptureActivity extends ListActivity {
         	applyPreferences();
         }
         Log.i(TAG, "preferences applied");
+        initializeDatabase();
         if(mAdapter.canMakeValidConnection()){
             Log.i(TAG, "getting volumes");
 	    	fetchAllVolumes();
@@ -116,9 +133,10 @@ public class BrowseScriptureActivity extends ListActivity {
             Log.i(TAG, "need new database");
         	getGoodDatabase();
         }
+        closeDatabase();
     }
     
-    @Override
+	@Override
     public boolean onCreateOptionsMenu(Menu menu) {
     	boolean result = super.onCreateOptionsMenu(menu);
     	
@@ -137,6 +155,9 @@ public class BrowseScriptureActivity extends ListActivity {
         	break;
         case R.id.download_database:
         	startDownloadDatabase();
+        	break;
+        case R.id.manage_bookmarks:
+        	startManageBookmarks();
         	break;
         }
         return super.onOptionsItemSelected(item);

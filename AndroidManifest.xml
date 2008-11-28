@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="com.digitalbias.android"
-      android:versionCode="010" android:versionName="0.2.6">
+      android:versionCode="018" android:versionName="0.2.8">
     <uses-permission android:name="android.permission.INTERNET" />
-    <application android:icon="@drawable/icon" android:label="@string/app_name">
-        <activity android:label="@string/app_name" android:name="BrowseScriptureActivity">
+    <application android:icon="@drawable/icon" android:label="@string/app_name" android:debuggable="true">
+        <activity android:label="@string/app_name" android:name="BrowseScriptureActivity" android:screenOrientation="sensor">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-    <activity android:name="BrowseVolumeActivity"/>
-    <activity android:name="BrowseBookActivity"/>
-    <activity android:name="ReadChapterActivity"/>
-    <activity android:name="DownloadDatabaseActivity"/>
-<activity android:name="SetPreferencesActivity"></activity>
-<activity android:name="FileList"></activity>
+    <activity android:name="BrowseVolumeActivity" android:screenOrientation="sensor" />
+    <activity android:name="BrowseBookActivity" android:screenOrientation="sensor" />
+    <activity android:name="ReadChapterActivity" android:screenOrientation="sensor" />
+    <activity android:name="DownloadDatabaseActivity" android:screenOrientation="sensor" />
+	<activity android:name="SetPreferencesActivity" android:screenOrientation="sensor" />
+	<activity android:name="FileList" android:screenOrientation="sensor" />
+	<activity android:name="ManageBookmarksActivity" android:screenOrientation="sensor" />
 </application>
+
 </manifest> 
