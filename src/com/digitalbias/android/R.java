@@ -31,7 +31,7 @@ public final class R {
         public static final int search=0x7f020007;
     }
     public static final class id {
-        public static final int add_bookmark=0x7f080026;
+        public static final int add_bookmark=0x7f080029;
         public static final int back_book=0x7f08001d;
         public static final int back_home=0x7f080007;
         public static final int back_volume=0x7f080008;
@@ -46,17 +46,20 @@ public final class R {
         public static final int chooseFileButton=0x7f080015;
         public static final int databaseEntry=0x7f080014;
         public static final int databaseText=0x7f080013;
+        public static final int delete_bookmark=0x7f080023;
         public static final int done_button=0x7f08000f;
-        public static final int download_database=0x7f080022;
+        public static final int download_database=0x7f080025;
+        public static final int edit_bookmark=0x7f080022;
         public static final int fontSizeSpinner=0x7f080019;
         public static final int fontSizeText=0x7f080018;
+        public static final int goto_bookmark=0x7f080021;
         public static final int location_text=0x7f080002;
-        public static final int manage_bookmarks=0x7f080023;
+        public static final int manage_bookmarks=0x7f080026;
         public static final int okButton=0x7f08001a;
         public static final int ok_button=0x7f080005;
-        public static final int open_next=0x7f080025;
-        public static final int open_preferences=0x7f080021;
-        public static final int open_previous=0x7f080024;
+        public static final int open_next=0x7f080028;
+        public static final int open_preferences=0x7f080024;
+        public static final int open_previous=0x7f080027;
         public static final int progress=0x7f080011;
         public static final int refresh_button=0x7f080010;
         public static final int scripture_layout=0x7f080000;
@@ -87,8 +90,9 @@ public final class R {
         public static final int volume_list=0x7f03000c;
     }
     public static final class menu {
-        public static final int browse_menu=0x7f070000;
-        public static final int chapter_menu=0x7f070001;
+        public static final int bookmark_context_menu=0x7f070000;
+        public static final int browse_menu=0x7f070001;
+        public static final int chapter_menu=0x7f070002;
     }
     public static final class string {
         public static final int add_bookmark=0x7f06000b;

@@ -1,14 +1,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 	<item android:id="@+id/open_previous"
 		android:title="@string/previous_title" 
-		android:icon="@drawable/prev" android:numericShortcut="1"/>
+		android:icon="@drawable/prev" android:alphabeticShortcut="P"/>
 	<item android:id="@+id/open_next"
 		android:title="@string/next_title" 
-		android:icon="@drawable/next" android:numericShortcut="2"/>
+		android:icon="@drawable/next" android:numericShortcut="N"/>
 	<item android:id="@+id/add_bookmark"
 		android:title="@string/add_bookmark" 
-		android:icon="@drawable/add_bookmark" android:numericShortcut="3"/>
+		android:icon="@drawable/add_bookmark" android:alphabeticShortcut="A"/>
 	<item android:id="@+id/manage_bookmarks"
 		android:title="@string/bookmarks_title" 
-		android:icon="@drawable/bookmarks" android:numericShortcut="4"/>
+		android:icon="@drawable/bookmarks" android:alphabeticShortcut="M"/>
 </menu>

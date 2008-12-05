@@ -1,11 +1,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 	<item android:id="@+id/open_preferences"
 		android:title="@string/preferences_title" 
-		android:icon="@drawable/preferences_icon" android:numericShortcut="1"/>
+		android:icon="@drawable/preferences_icon" android:alphabeticShortcut="P"/>
 	<item android:id="@+id/download_database"
 		android:title="@string/download_title" 
-		android:icon="@drawable/download" android:numericShortcut="2"/>
+		android:icon="@drawable/download" android:alphabeticShortcut="D"/>
 	<item android:id="@+id/manage_bookmarks"
 		android:title="@string/bookmarks_title" 
-		android:icon="@drawable/bookmarks" android:numericShortcut="3"/>
+		android:icon="@drawable/bookmarks" android:alphabeticShortcut="M"/>
 </menu>

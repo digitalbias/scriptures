@@ -139,10 +139,8 @@ public class BrowseScriptureActivity extends ListActivity {
 	@Override
     public boolean onCreateOptionsMenu(Menu menu) {
     	boolean result = super.onCreateOptionsMenu(menu);
-    	
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.browse_menu, menu);
-    	
     	return result;
     }
     

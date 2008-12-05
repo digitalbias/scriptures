@@ -36,6 +36,7 @@ public class ScriptureDbAdapter {
     public static final String BOOKMARK_NUMBER = "_id";
     public static final String BOOKMARK_BOOK_ID = "book_id";
     public static final String BOOKMARK_CHAPTER = "chapter";
+    public static final String BOOKMARK_CHAPTER_TITLE = "chapter_title";
     public static final String BOOKMARK_TITLE = "title";
     
     private static final String VALIDATAION_QUERY = "SELECT COUNT(*) as book_count FROM sqlite_master WHERE name = 'books'";
@@ -56,8 +57,8 @@ public class ScriptureDbAdapter {
 	private static final String GET_MAX_BOOK_ID = "SELECT MAX(book_id) AS book_id FROM books";
 	
 	private static final String CREATE_BOOKMARKS_TABLE = "CREATE TABLE bookmarks (_id INTEGER PRIMARY KEY, book_id INTEGER, chapter INTEGER, title TEXT);";
-	private static final String ALL_BOOKMARKS_QUERY = "SELECT DISTINCT m._id AS _id, (b.book_title || ' ' || v.chapter) AS chapter_title, m.book_id as book_id , m.chapter as chapter, m.title as title FROM verses v, books b, bookmarks m WHERE v.book_id = b.book_id AND m.book_id = v.book_id AND v.chapter = m.chapter";
-	private static final String SINGLE_BOOKMARKS_QUERY = "SELECT DISTINCT m._id AS _id, (b.book_title || ' ' || v.chapter) AS chapter_title, m.book_id as book_id , m.chapter as chapter, m.title as title FROM verses v, books b, bookmarks m WHERE v.book_id = b.book_id AND m.book_id = v.book_id AND v.chapter = m.chapter AND v.book_id = ? AND v.chapter = ?";
+	private static final String ALL_BOOKMARKS_QUERY = "SELECT DISTINCT m._id AS _id, (b.book_title || ' ' || v.chapter) AS chapter_title, m.book_id as book_id , m.chapter as chapter, m.title as title FROM verses v, books b, bookmarks m WHERE v.book_id = b.book_id AND m.book_id = v.book_id AND v.chapter = m.chapter ORDER BY book_id, chapter";
+	private static final String SINGLE_BOOKMARK_QUERY = "SELECT DISTINCT m._id AS _id, (b.book_title || ' ' || v.chapter) AS chapter_title, m.book_id as book_id , m.chapter as chapter, m.title as title FROM verses v, books b, bookmarks m WHERE v.book_id = b.book_id AND m.book_id = v.book_id AND v.chapter = m.chapter AND m._id = ?";
 	private static final String NEW_BOOKMARK = "INSERT INTO bookmarks (book_id, chapter, title) VALUES (?, ?, ?)";
 	private static final String UPDATE_BOOKMARK = "UPDATE bookmarks SET book_id = ?, chapter = ?, title = ? WHERE _id = ?";
 	private static final String DELETE_BOOKMARK = "DELETE FROM bookmarks WHERE _id = ?";
@@ -332,12 +333,12 @@ public class ScriptureDbAdapter {
     	log("db","bookmark created: " + Long.toString(rowId));
     }
     
-    public void updateBookmark(Integer bookmark_id, Integer book, Integer chapter, String title){
+    public void updateBookmark(Long bookmark_id, Long book, Long chapter, String title){
     	Object[] args = new Object[] { book, chapter, title, bookmark_id };
     	executeSQL(UPDATE_BOOKMARK, args);
     }
 
-    public void deleteBookmark(Integer bookmark_id){
+    public void deleteBookmark(Long bookmark_id){
     	Object[] args = new Object[] { bookmark_id };
     	executeSQL(DELETE_BOOKMARK, args);
     }
@@ -361,4 +362,9 @@ public class ScriptureDbAdapter {
     	String[] args = new String[] {id};
     	return queryAndMoveToFirst(SINGLE_VOLUME_QUERY, args);
     }
+
+	public Cursor fetchSingleBookmark(long bookmarkId) {
+    	String[] args = new String[] {Long.toString(bookmarkId)};
+    	return queryAndMoveToFirst(SINGLE_BOOKMARK_QUERY, args);
+	}
 }
