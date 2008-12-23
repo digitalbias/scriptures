@@ -8,6 +8,9 @@
 	<item android:id="@+id/add_bookmark"
 		android:title="@string/add_bookmark" 
 		android:icon="@drawable/add_bookmark" android:alphabeticShortcut="A"/>
+	<item android:id="@+id/move_bookmark"
+		android:title="@string/move_bookmark" 
+		android:icon="@drawable/move_bookmark" android:alphabeticShortcut="M"/>
 	<item android:id="@+id/manage_bookmarks"
 		android:title="@string/bookmarks_title" 
 		android:icon="@drawable/bookmarks" android:alphabeticShortcut="M"/>

@@ -26,10 +26,15 @@ import android.widget.Toast;
 public class ReadChapterActivity extends Activity implements OnTouchListener, OnGestureListener {
 
 	private static final int ACTIVITY_MANAGE_BOOKMARKS = 0;
+	private static final int ACTIVITY_BROWSE = 1;
+	private static final int ACTIVITY_SELECT_BOOKMARK = 2;
 	
+	private static final String CALLING_ACTIVITY = "callingActivity";
+
 	private ScriptureDbAdapter mAdapter;
 	private Cursor mCursor;
 	private Long mChapterId;
+	private Long mVolumeId;
 	private Long mBookId;
 
     private TextView mTitleText;
@@ -39,6 +44,7 @@ public class ReadChapterActivity extends Activity implements OnTouchListener, On
 
 	private GestureDetector mGestureDetector; 
 	protected Context mContext;
+	protected int mCalledFrom;
 	
 	/** Called when the activity is first created. */
     @Override
@@ -57,7 +63,9 @@ public class ReadChapterActivity extends Activity implements OnTouchListener, On
         mHomeButton = (Button) findViewById(R.id.back_home);
         
         mBookId = null;
-        Bundle extras = getIntent().getExtras();
+        mVolumeId = null;
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
         setMembers(extras);
     }
 
@@ -68,6 +76,8 @@ public class ReadChapterActivity extends Activity implements OnTouchListener, On
 
     	mChapterId = bundle.getLong(ScriptureDbAdapter.TABLE_ID);
     	mBookId = bundle.getLong(ScriptureDbAdapter.BOOK_ID);
+    	mVolumeId = bundle.getLong(ScriptureDbAdapter.VOLUME_ID);
+    	mCalledFrom = bundle.getInt(CALLING_ACTIVITY, ACTIVITY_BROWSE);
     	
     	mTitleText.setText(title);
     	mBookButton.setText(bookTitle);
@@ -125,17 +135,19 @@ public class ReadChapterActivity extends Activity implements OnTouchListener, On
 //    	verses.setOnTouchListener(this); 
     }
     
-    private Bundle populateReturnBundle(Bundle bundle, String returnActivityClassName){
+    private Bundle populateReturnBundle(Bundle bundle, int returnBrowseMode){
     	
     	Cursor c = mAdapter.fetchSingleBook(mBookId.toString());
     	
         bundle.putLong(ScriptureDbAdapter.TABLE_ID, mBookId);
+        bundle.putLong(ScriptureDbAdapter.BOOK_ID, mBookId);
+        bundle.putLong(ScriptureDbAdapter.VOLUME_ID, mVolumeId);
         bundle.putString(ScriptureDbAdapter.BOOK_TITLE, c.getString(
                 c.getColumnIndexOrThrow(ScriptureDbAdapter.BOOK_TITLE)));
         bundle.putString(ScriptureDbAdapter.BOOK_SUBTITLE, c.getString(
                 c.getColumnIndexOrThrow(ScriptureDbAdapter.BOOK_SUBTITLE)));
         bundle.putString(ScriptureDbAdapter.VOLUME_TITLE, mVolumeButton.getText().toString());
-    	bundle.putString(BrowseScriptureActivity.GO_BACK_COMMAND, returnActivityClassName);
+    	bundle.putInt(BrowseScriptureActivity.BROWSE_MODE, returnBrowseMode);
     	
     	return bundle;
     }
@@ -143,17 +155,17 @@ public class ReadChapterActivity extends Activity implements OnTouchListener, On
     private void setupUiElements(){
         mBookButton.setOnClickListener(new View.OnClickListener() {
         	public void onClick(View view){
-        		goBack(BrowseBookActivity.class.getName());
+        		goBack(BrowseScriptureActivity.BROWSE_BOOK_MODE);
         	}
         });
         mVolumeButton.setOnClickListener(new View.OnClickListener() {
         	public void onClick(View view){
-        		goBack(BrowseVolumeActivity.class.getName());
+        		goBack(BrowseScriptureActivity.BROWSE_VOLUME_MODE);
         	}
         });
         mHomeButton.setOnClickListener(new View.OnClickListener() {
         	public void onClick(View view){
-        		goBack(BrowseScriptureActivity.class.getName());
+        		goBack(BrowseScriptureActivity.BROWSE_SCRIPTURES_MODE);
         	}
         });
 
@@ -185,6 +197,9 @@ public class ReadChapterActivity extends Activity implements OnTouchListener, On
 	        case R.id.add_bookmark:
 	        	addBookmark();
 	        	break;
+	        case R.id.move_bookmark:
+	        	moveBookmark();
+	        	break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -204,6 +219,15 @@ public class ReadChapterActivity extends Activity implements OnTouchListener, On
     protected void manageBookmarks(){
         Intent i = new Intent(this, ManageBookmarksActivity.class);
         startActivityForResult(i, ACTIVITY_MANAGE_BOOKMARKS);
+    }
+    
+    protected void moveBookmark(){
+    	Intent i = new Intent(this, SelectBookmarkActivity.class);
+    	Bundle extras = new Bundle();
+    	extras.putLong(ScriptureDbAdapter.BOOK_ID, mBookId);
+    	extras.putLong(ScriptureDbAdapter.CHAPTER_NUM, mChapterId);
+    	i.putExtras(extras);
+    	startActivityForResult(i, ACTIVITY_SELECT_BOOKMARK);
     }
     
     protected void addBookmark(){
@@ -242,9 +266,9 @@ public class ReadChapterActivity extends Activity implements OnTouchListener, On
     	mAdapter.createBookmark(book, chapter, title);
     }
     
-    private void goBack(String returnToClass){
+    private void goBack(int returnMode){
         Bundle bundle = new Bundle();
-        bundle = populateReturnBundle(bundle, returnToClass);
+        bundle = populateReturnBundle(bundle, returnMode);
         Intent mIntent = new Intent();
         mIntent.putExtras(bundle);
         setResult(RESULT_OK, mIntent);
@@ -288,6 +312,15 @@ public class ReadChapterActivity extends Activity implements OnTouchListener, On
     	verses.setTextSize(SetPreferencesActivity.getPreferedFontSize(this));
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+        log("result");
+        if (resultCode == RESULT_OK && requestCode == ACTIVITY_SELECT_BOOKMARK) {
+    		Toast.makeText(mContext, "Bookmark updated", Toast.LENGTH_LONG).show();
+        }
+    }
+    
 	public boolean onTouch(View view, MotionEvent event) {
 		return mGestureDetector.onTouchEvent(event);
 	}
@@ -330,7 +363,10 @@ public class ReadChapterActivity extends Activity implements OnTouchListener, On
 	}
 	
 	public void log(String message){
-		Log.i("read",message);
+		if(BrowseScriptureActivity.DEBUG){
+			Log.i("read",message);
+			Toast.makeText(this, message, Toast.LENGTH_LONG);
+		}
 	}
 
 }

@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 
@@ -26,6 +27,9 @@ public class SetPreferencesActivity extends Activity {
 	protected static final String DEFAULT_FONT = "Small";
 	protected static final String VERSE_SIZE_FONT_PREF = "verseSizeFont";
 	
+	protected static final boolean DEFAULT_SCREEN_ORIENTATION = true;
+	protected static final String SCREEN_ORIENTATION_PREF = "useScreenOrientation";
+
 	protected static final int SMALL_FONT = 0;
 	protected static final int MEDIUM_FONT = 1;
 	protected static final int LARGE_FONT = 2;
@@ -80,6 +84,10 @@ public class SetPreferencesActivity extends Activity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         setSpinnerFontSize(spinner, fontSize);
+        
+        boolean useScreen = settings.getBoolean(SCREEN_ORIENTATION_PREF, DEFAULT_SCREEN_ORIENTATION);
+        CheckBox checkbox = (CheckBox)findViewById(R.id.screenOrientationCheckbox);
+        checkbox.setChecked(useScreen);
 
         Button button = (Button)findViewById(R.id.okButton);
         button.setOnClickListener(new View.OnClickListener(){
@@ -184,6 +192,15 @@ public class SetPreferencesActivity extends Activity {
     	return result;
     }
     
+    protected boolean getBoolean(int controlId){
+    	boolean result = DEFAULT_SCREEN_ORIENTATION;
+    	
+    	CheckBox checkbox = (CheckBox)findViewById(controlId);
+    	result = checkbox.isChecked();
+    	
+    	return result;
+    }
+    
     private boolean savePreferences(){
     	
     	SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
@@ -200,6 +217,9 @@ public class SetPreferencesActivity extends Activity {
 
     	int fontSize = getSelectedFontSize(R.id.fontSizeSpinner);
     	editor.putInt(VERSE_SIZE_FONT_PREF, fontSize);
+
+    	boolean useScreen = getBoolean(R.id.screenOrientationCheckbox);
+    	editor.putBoolean(SCREEN_ORIENTATION_PREF, useScreen);
 
     	editor.commit();
     	return true;

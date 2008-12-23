@@ -12,6 +12,7 @@
 	<string name="previous_title">Previous</string>
 	<string name="next_title">Next</string>
 	<string name="add_bookmark">Add Bookmark</string>
+	<string name="move_bookmark">Move Bookmark</string>
 	<string name="bookmarks_title">Bookmarks</string>
 	
     <string name="download_activity_title">Downloading</string>

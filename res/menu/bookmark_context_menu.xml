@@ -1,5 +1,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 	<item android:title="Go to" android:orderInCategory="0" android:id="@+id/goto_bookmark" android:alphabeticShortcut="G"/>
 	<item android:title="Edit" android:orderInCategory="1" android:id="@+id/edit_bookmark" android:alphabeticShortcut="E"/>
+	<item android:title="Move" android:orderInCategory="1" android:id="@+id/move_bookmark" android:alphabeticShortcut="M"/>
 	<item android:title="Delete" android:orderInCategory="2" android:id="@+id/delete_bookmark" android:alphabeticShortcut="D"/>
 </menu>

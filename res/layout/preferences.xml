@@ -48,10 +48,18 @@
 			android:layout_height="wrap_content"
 			/>
 			
+	<CheckBox android:id="@+id/screenOrientationCheckbox" 
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content" 
+        android:text="Use screen orientation"
+        android:layout_below="@id/fontSizeSpinner" 
+        android:checked="true"
+        />
+        
     <Button android:id="@+id/okButton" 
             android:layout_width="wrap_content" 
             android:layout_height="wrap_content" 
-            android:layout_below="@id/fontSizeSpinner"
+            android:layout_below="@id/screenOrientationCheckbox"
             android:layout_alignParentRight="true"
             android:layout_marginLeft="10px"
             android:text="OK" />

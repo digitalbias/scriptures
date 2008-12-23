@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="com.digitalbias.android"
-      android:versionCode="020" android:versionName="0.3.0 beta 1">
+      android:versionCode="021" android:versionName="0.3.0 beta 2">
     <uses-permission android:name="android.permission.INTERNET" />
     <application android:icon="@drawable/icon" android:label="@string/app_name" android:debuggable="true">
         <activity android:label="@string/app_name" android:name="BrowseScriptureActivity" android:screenOrientation="sensor">
@@ -10,13 +10,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-    <activity android:name="BrowseVolumeActivity" android:screenOrientation="sensor" />
-    <activity android:name="BrowseBookActivity" android:screenOrientation="sensor" />
     <activity android:name="ReadChapterActivity" android:screenOrientation="sensor" />
     <activity android:name="DownloadDatabaseActivity" android:screenOrientation="sensor" />
 	<activity android:name="SetPreferencesActivity" android:screenOrientation="sensor" />
 	<activity android:name="FileList" android:screenOrientation="sensor" />
 	<activity android:name="ManageBookmarksActivity" android:screenOrientation="sensor" />
+	<activity android:name="SelectBookmarkActivity" android:screenOrientation="sensor" />
 </application>
 
 </manifest> 

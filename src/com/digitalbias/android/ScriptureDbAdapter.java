@@ -10,7 +10,9 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
+//import android.util.Log;
 import android.util.Log;
+import android.widget.Toast;
 
 public class ScriptureDbAdapter {
 
@@ -61,6 +63,7 @@ public class ScriptureDbAdapter {
 	private static final String SINGLE_BOOKMARK_QUERY = "SELECT DISTINCT m._id AS _id, (b.book_title || ' ' || v.chapter) AS chapter_title, m.book_id as book_id , m.chapter as chapter, m.title as title FROM verses v, books b, bookmarks m WHERE v.book_id = b.book_id AND m.book_id = v.book_id AND v.chapter = m.chapter AND m._id = ?";
 	private static final String NEW_BOOKMARK = "INSERT INTO bookmarks (book_id, chapter, title) VALUES (?, ?, ?)";
 	private static final String UPDATE_BOOKMARK = "UPDATE bookmarks SET book_id = ?, chapter = ?, title = ? WHERE _id = ?";
+	private static final String MOVE_BOOKMARK = "UPDATE bookmarks SET book_id = ?, chapter = ? WHERE _id = ?";
 	private static final String DELETE_BOOKMARK = "DELETE FROM bookmarks WHERE _id = ?";
 
 	
@@ -77,7 +80,6 @@ public class ScriptureDbAdapter {
 	private static final String ALL_MARKINGS_QUERY = "SELECT _id, book_id, chapter, verse_id, mark_type, color FROM markings";
 	private static final String CHAPTER_MARKINGS_QUERY = "SELECT _id, book_id, chapter, verse_id, mark_type, color FROM markings WHERE book_id = ? AND chapter = ?";
 
-	
 	
 	private static final String TABLE_EXISTS_QUERY = "SELECT count(*) AS count FROM sqlite_master WHERE type = 'table' AND name = ?";
 
@@ -286,11 +288,17 @@ public class ScriptureDbAdapter {
     }
     
     protected void log(String tag, String message){
-    	Log.i(tag, message);
+		if(BrowseScriptureActivity.DEBUG){
+	    	Log.i(tag, message);
+			Toast.makeText(mCtx, message, Toast.LENGTH_LONG);
+		}
     }
     
     protected void log(String tag, String message, Throwable th){
-    	Log.e(tag, message, th);
+		if(BrowseScriptureActivity.DEBUG){
+	    	Log.e(tag, message, th);
+			Toast.makeText(mCtx, message, Toast.LENGTH_LONG);
+		}
     }
 
     public Cursor fetchAllVolumes(){
@@ -333,11 +341,16 @@ public class ScriptureDbAdapter {
     	log("db","bookmark created: " + Long.toString(rowId));
     }
     
-    public void updateBookmark(Long bookmark_id, Long book, Long chapter, String title){
-    	Object[] args = new Object[] { book, chapter, title, bookmark_id };
+    public void updateBookmark(Long bookmarkId, Long book, Long chapter, String title){
+    	Object[] args = new Object[] { book, chapter, title, bookmarkId };
     	executeSQL(UPDATE_BOOKMARK, args);
     }
 
+	public void updateBookmark(Long bookmarkId, Long book, Long chapter) {
+    	Object[] args = new Object[] { book, chapter, bookmarkId };
+    	executeSQL(MOVE_BOOKMARK, args);
+	}
+	
     public void deleteBookmark(Long bookmark_id){
     	Object[] args = new Object[] { bookmark_id };
     	executeSQL(DELETE_BOOKMARK, args);
@@ -367,4 +380,5 @@ public class ScriptureDbAdapter {
     	String[] args = new String[] {Long.toString(bookmarkId)};
     	return queryAndMoveToFirst(SINGLE_BOOKMARK_QUERY, args);
 	}
+
 }

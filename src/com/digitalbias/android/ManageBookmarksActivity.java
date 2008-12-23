@@ -202,7 +202,7 @@ public class ManageBookmarksActivity extends ListActivity {
     }
 
     private void debug(String message){
-    	if(false) {
+		if(BrowseScriptureActivity.DEBUG){
 	    	Log.d("bookmarks", message);
 	    	Toast.makeText(this, message, Toast.LENGTH_LONG);
     	}
