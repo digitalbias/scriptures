@@ -3,12 +3,15 @@ package com.digitalbias.android;
 import java.io.BufferedOutputStream;
 import java.io.Closeable;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -38,7 +41,8 @@ import android.widget.TextView;
 public class DownloadDatabaseActivity extends ListActivity {
 	
 	private List<DatabaseLocation> mDatabaseList;
-	private static final String DATABASE_LIST_URI = "http://scriptures.digitalbias.com/scripture_list.xml";
+	private static final String DATABASE_LIST_URI = "http://scriptures.digitalbias.com/compressed_scripture_list.xml";
+//	private static final String DATABASE_LIST_URI = "http://scriptures.digitalbias.com/scripture_list.xml";
 //	private static final String DATABASE_LIST_URI = "http://androidscriptures.googlecode.com/files/scripture_list.xml.xml";
 //	private static final String DATABASE_LIST_URI = "http://www.mediafire.com/file/jyzbdngleji/scripture_list.xml";
     private static final int IO_BUFFER_SIZE = 4 * 1024;
@@ -81,9 +85,31 @@ public class DownloadDatabaseActivity extends ListActivity {
 		public void onPostExecute(File result) {
             Log.i(BrowseScriptureActivity.TAG, "Done: " + Long.toString(result.length()));
 			hideProgress();
+			unzipFile(result);
+			result.delete();
 		}
 
-	    public void downloadFile(File destinationFile, URL url) throws IOException {
+	    private void unzipFile(File result) {
+	    	try {
+	    		byte[] buf = new byte[1024];
+		    	ZipInputStream zis = new ZipInputStream(new FileInputStream(result));
+		    	ZipEntry entry = zis.getNextEntry();
+		    	String destinationDirectory = result.getParentFile().getAbsolutePath();
+		    	File destfile = new File(destinationDirectory + "/" + entry.getName());
+		    	Log.d("download", "file: " + destfile.getAbsolutePath());
+		    	FileOutputStream fos = new FileOutputStream(destfile);
+		    	int n;
+		    	while ((n = zis.read(buf, 0, 1024)) > -1){
+		    		fos.write(buf, 0, n);
+		    	}
+		    	fos.close();
+		    	zis.closeEntry();
+	    	} catch (Exception e){
+	    		log(e);
+	    	}
+		}
+	    
+		public void downloadFile(File destinationFile, URL url) throws IOException {
 	    	if(!destinationFile.exists()) {
 	    		if(!destinationFile.getParentFile().exists()){
 	    			destinationFile.getParentFile().mkdirs();
@@ -133,23 +159,22 @@ public class DownloadDatabaseActivity extends ListActivity {
 	        }
 	    }
 
+	    protected void log(Exception e){
+	    	if(BrowseScriptureActivity.DEBUG) {
+		    	Log.e("DownloadDatabaseActivity", "Error", e);
+	    	}
+	    }
 	}
     
     private void hideProgress() {
         if (mProgressBar.getVisibility() != View.GONE) {
-//            final Animation fadeOut = AnimationUtils.loadAnimation(this, R.anim.fade_out);
             mProgressBar.setVisibility(View.GONE);
-//            mProgressBar.startAnimation(fadeOut);
             mDoneButton.setEnabled(true);
             mRefreshButton.setEnabled(true);
-//          android:layout_below="@id/toolbar"
-//    		android:layout_width="fill_parent" 
-//    		android:layout_height="wrap_content" 
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(mTextView.getLayoutParams());
             params.addRule(RelativeLayout.BELOW, R.id.toolbar);
             mTextView.setLayoutParams(params);
         }
-        mProgressDialog.hide();
     	AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage("Download complete");
 		builder.setTitle("Download complete");
@@ -159,6 +184,7 @@ public class DownloadDatabaseActivity extends ListActivity {
 		});
 		builder.setCancelable(true);
 		AlertDialog dialog = builder.create();
+        mProgressDialog.dismiss();
 		dialog.show();
     }
 
@@ -284,4 +310,5 @@ public class DownloadDatabaseActivity extends ListActivity {
     		dialog.show();
     	}
     }
+    
 }

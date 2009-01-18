@@ -57,6 +57,10 @@ public class BrowseScriptureActivity extends ListActivity {
     }
     
     private void initializeDatabase() {
+        if(mCursor != null) {
+        	mCursor.close();
+        	mCursor = null;
+        }
         if(mAdapter != null) {
         	mAdapter.close();
         }
@@ -249,16 +253,19 @@ public class BrowseScriptureActivity extends ListActivity {
         if (resultCode == RESULT_OK) {
         	switch (requestCode) {
         		case ACTIVITY_PREFERENCES:
-		        	applyPreferences();
-		        	initializeDatabase();
-		            if(!mAdapter.canMakeValidConnection()){
-		            	getGoodDatabase();
-		            }
+        	    	stopManagingCursor(mCursor);
+        	        applyPreferences();
+        	        initializeDatabase();
+        	        if(mAdapter.canMakeValidConnection()){
+        		    	browseScriptures();
+        	        } else {
+        	        	getGoodDatabase();
+        	        }
 		            break;
         		case ACTIVITY_READ_CHAPTER:
+                    beginBrowsing(intent);
         			break;
         	}
-            beginBrowsing(intent);
         }
     }
     
@@ -290,6 +297,10 @@ public class BrowseScriptureActivity extends ListActivity {
     public void openPreferences(){
         Intent i = new Intent(this, SetPreferencesActivity.class);
         startActivityForResult(i, ACTIVITY_PREFERENCES);
+    }
+    
+    public void log(String message){
+    	log("Browse Scriptures", message);
     }
     
     public void log(String tag, String message){

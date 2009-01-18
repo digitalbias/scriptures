@@ -1,0 +1,89 @@
+Preface to the Updated King James Version (UKJV)
+------------------------------------------------
+
+This translation/update is in the Public Domain, so feel free to copy, publish, and use it. No 
+permission in whatsoever form is needed. You already have 100% permission to publish, copy, and 
+distribute the Updated King James Version (UKJV) as much as you want to in any form. However 
+the author of "Translator" requests that the following be observed: -
+
+i)	A credit line with the following words "I love Jesus (UKJV)." To be stated in the 
+	copyright page of the work that involves the UKJV.
+ii)	No modifications to the UKJV, this does NOT include typographical corrections or 
+	adding of studies notes, comments and layouts modifications, which are essential to 
+	any publications. However NO addition of footnotes that indicates the preference of 
+	other manuscripts superiority in any form are allowed, e.g. "Most reliable 
+	manuscripts does not have so and so", "The verse x-x are not found in 
+	Vaticanus/Sinaiticus" etc.
+
+The King James Version has brought life and light since it's first inception in 1611.  Major revivals 
+all over the world and their works since have been attributed to the usage of this translation. While 
+most modern translations rely on texts that are influenced by Codex Vaticanus and Sinaiticus, the 
+KJV uses the traditional text (Textus Receptus, TR). 
+
+The TR has survived persecution and was washed with the blood of martyrs that defended it and is 
+faithfully preserves (by copying) from one generation to the other. Codex Vaticanus and Sinaiticus 
+however was buried and was not employed until modern scholars promoted them as the 'most 
+reliable/early text' in the 18th century. This causes an outbreak of confusions among the texts 
+differences between the KJV and others, e.g. Acts 8:37, Mark 9-20 were either missing or labeled 
+as "Probably not in the original texts" in most modern translations. Whether God preserves His 
+Word as a result of "copying from one generation to another" or "by remaining hidden until the 18th 
+century" is not a matter to be discussed in this preface. Without the Holy Spirit's illumination, you 
+can have the very original Hebrew/Greek manuscripts and yet gain nothing out of it. The purpose 
+of this update is not to venture further into any form of textual criticism dispute but rather unto 
+another opening for the distribution of God's Word.
+
+Today, new generations of Christians have emerged and the need to update the antiquated/archaic 
+words in the KJV must take place. The NKJV and 21st Century King James are good examples of 
+fulfilling this void, however the Updated KJV (UKJV) decides to take one step further, that is to 
+preserve also the freedom of using it without copyright limitations. With a total of less than 6% of 
+changes to the Authorized KJV, the UKJV promotes the usage of this wonderful translation (KJV) 
+for today's believers.
+
+While translating the KJV and updating its structure and words requires scholars and years of work, 
+updating the KJV with the help of technology requires only a fraction of the time. With this fact in 
+mind and the great computing power available today, the software called "Translator" was created.  
+"Translator" extracts all archaic words and by comparing them with a custom dictionary it will sort 
+and produce a list of all verses that needs updating. The author of "Translator" then views this list 
+and by comparing the words with references to Strong's Greek/Hebrew concordance, the new or 
+more comprehensible words are then inserts them into the custom dictionary. Later the "Translator" 
+will update all the words in the entire KJV text. The use of technology also guarantees that the 
+work produced is not "biased" in any nature but accurate and true to its meaning. One must always 
+bear in mind that this is not a new translation but an UPDATE.
+
+The "Translator" retains the unique English structure of the authorized KJV. The following are the 
+rules and formats used in the updating process: -
+ 
+i)	Singular and Plural meaning must be retained, e.g. Modern translations have mistakenly 
+	translated "ye" into "you" when "ye" actually means one or more person. The KJV uses 
+	"thee" to refer to singular object and "ye" to multiple. The "Translator" replaces "ye" 
+	with "all of you".
+ii)	Old words are replaced with new similar words. E.g. "musick" with "music"
+iii)	Legendary words referring to animals that have no historical evidence will be retained 
+	and the possible object is suggested in braces. E.g. "unicorn" is translated as "unicorn 
+	(p. ox)".  The "p." prefix indicates that the following word is a suggested word.
+iv)	Words referring to physical objects that can be replaced without posting any changes in 
+	Christian doctrines whatsoever, will be replaced by several words that reflects its 
+	meaning as close as possible. E.g. "habergeon" is translated as "armour of jacket"
+v)	The actual Greek words translated as "word", "spirit" and "love" are shown with the 
+	original word in braces. E.g. "the word (o. rhema) of God is ". The "o." prefix indicates 
+	that the following word is the original word.
+vi)	Old words that means differently today are replaced. E.g. "meat" is translated as "food", 
+	"want" as "lack"
+vii)	Old expressions are replaced. E.g. "on a day" is translated as "upon a certain day"
+viii)	Words that have more than one meaning in different context are retained. E.g. "suffer" 
+	can mean accept, allow or endure.
+ix)	Words that are not found in any dictionary (invalid) but that is easily understandable and 
+	if no proper modern words can replaced them are preserved. E.g. "righteousnesses"
+
+(p. suggested word)
+(o. original word)
+
+I pray that God bless this humble work, All Glory be to God through Jesus Christ our Lord. In 
+Jesus Name. Amen.
+
+Author of "Translator"
+
+Contact: updatedkjv@yahoo.com
+Current Site: http://www.geocities.com/updatedkjv/index.html
+
+--------------------------------->End of Preface<--------------------------------------
