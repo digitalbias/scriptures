@@ -60,10 +60,12 @@ public class BrowseScriptureActivity extends ListActivity {
     public void onNewIntent(Intent intent){
     	log("New INTENT");
     	Bundle extras = intent.getExtras();
-    	mVolumeId = extras.getLong(ScriptureDbAdapter.VOLUME_ID);
-    	mBookId = extras.getLong(ScriptureDbAdapter.BOOK_ID);
-    	mBrowseMode = extras.getInt(BROWSE_MODE);
-    	log(mVolumeId + " : " + mBookId + " : " + mBrowseMode);
+    	if(extras!= null) {
+	    	mVolumeId = extras.getLong(ScriptureDbAdapter.VOLUME_ID);
+	    	mBookId = extras.getLong(ScriptureDbAdapter.BOOK_ID);
+	    	mBrowseMode = extras.getInt(BROWSE_MODE);
+	    	log(mVolumeId + " : " + mBookId + " : " + mBrowseMode);
+    	}
     	beginBrowsing(intent);
     }
     
