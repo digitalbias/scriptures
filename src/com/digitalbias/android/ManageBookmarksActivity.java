@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -24,8 +25,6 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 
 public class ManageBookmarksActivity extends ListActivity {
 
-	private static final int ACTIVITY_READ_CHAPTER = 0;
-	
 	private static final int GOTO_MENU_ORDER = 0;
 	private static final int EDIT_MENU_ORDER = 1;
 	private static final int DELETE_MENU_ORDER = 2;
@@ -113,8 +112,11 @@ public class ManageBookmarksActivity extends ListActivity {
         i.putExtra(ScriptureDbAdapter.VOLUME_TITLE, getVolumeTitle(chapter));
         i.putExtra(ScriptureDbAdapter.BOOK_TITLE_SHORT, getShortBookTitle(chapter));
         i.putExtra(ScriptureDbAdapter.CHAPTER_TITLE, getChapterTitle(chapter));
+        i.putExtra(ScriptureDbAdapter.BOOKMARK_POSITION, getBookmarkPosition(bookmarkId));
+        i.putExtra(ReadChapterActivity.CALLING_ACTIVITY, this.getClass().getName());
         
-        startActivityForResult(i, ACTIVITY_READ_CHAPTER);
+        startActivity(i);
+        finish();
     }
     
     protected void editBookmark(final long bookmarkId){
@@ -131,6 +133,7 @@ public class ManageBookmarksActivity extends ListActivity {
     	titleEdit.setText(bookmarkInfo.getString(bookmarkInfo.getColumnIndex(ScriptureDbAdapter.BOOKMARK_TITLE)));
     	final long bookId = bookmarkInfo.getLong(bookmarkInfo.getColumnIndex(ScriptureDbAdapter.BOOKMARK_BOOK_ID));
     	final long chapter = bookmarkInfo.getLong(bookmarkInfo.getColumnIndex(ScriptureDbAdapter.BOOKMARK_CHAPTER));
+    	final long position = bookmarkInfo.getLong(bookmarkInfo.getColumnIndex(ScriptureDbAdapter.BOOKMARK_POSITION));
     	
 		Button button = (Button)dialog.findViewById(R.id.cancel_button);
 		button.setOnClickListener(new View.OnClickListener(){
@@ -144,7 +147,7 @@ public class ManageBookmarksActivity extends ListActivity {
 				dialog.hide();
 		    	EditText titleEdit = (EditText) dialog.findViewById(R.id.title_edit);
 				String title = titleEdit.getText().toString();
-		    	mAdapter.updateBookmark(new Long(bookmarkId), new Long(bookId), new Long(chapter), title);
+		    	mAdapter.updateBookmark(new Long(bookmarkId), new Long(bookId), new Long(chapter), title, new Long(position));
 				debug("bookmark updated");
 				dialog.dismiss();
 				fetchBookmarks();
@@ -173,6 +176,20 @@ public class ManageBookmarksActivity extends ListActivity {
         .create();
         
         dialog.show();
+    }
+    
+    private Long getBookmarkPosition(long bookmarkId){
+    	Long result = null; 
+    	Cursor cursor = null;
+    	try {
+    		cursor = mAdapter.fetchSingleBookmark(bookmarkId);
+    		result = cursor.getLong(cursor.getColumnIndex(ScriptureDbAdapter.BOOKMARK_POSITION));
+    	} catch (SQLiteException e) {
+    		result = new Long(0);
+    	} finally {
+    		if(cursor!= null) cursor.close();
+    	}
+    	return result;
     }
     
     private Cursor getChapter(long bookmarkId){

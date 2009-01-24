@@ -29,7 +29,7 @@ public class ReadChapterActivity extends Activity implements OnTouchListener, On
 	private static final int ACTIVITY_BROWSE = 1;
 	private static final int ACTIVITY_SELECT_BOOKMARK = 2;
 	
-	private static final String CALLING_ACTIVITY = "callingActivity";
+	public static final String CALLING_ACTIVITY = "callingActivity";
 
 	private ScriptureDbAdapter mAdapter;
 	private Cursor mCursor;
@@ -41,10 +41,12 @@ public class ReadChapterActivity extends Activity implements OnTouchListener, On
 	private Button mBookButton;
 	private Button mVolumeButton;
 	private Button mHomeButton;
-
+	private ScrollView mScrollView; 
+	
 	private GestureDetector mGestureDetector; 
 	protected Context mContext;
-	protected int mCalledFrom;
+	protected String mCalledFrom;
+	protected int mScrollTo;
 	
 	/** Called when the activity is first created. */
     @Override
@@ -54,10 +56,11 @@ public class ReadChapterActivity extends Activity implements OnTouchListener, On
         setContentView(R.layout.read_chapter);
         mContext = this;
 
+        mScrollView = (ScrollView) findViewById(R.id.scroll_view);
+
         setupGestures();
         
         mTitleText = (TextView) findViewById(R.id.chapter_title);
-
         mBookButton = (Button) findViewById(R.id.back_book);
         mVolumeButton = (Button) findViewById(R.id.back_volume);
         mHomeButton = (Button) findViewById(R.id.back_home);
@@ -77,7 +80,14 @@ public class ReadChapterActivity extends Activity implements OnTouchListener, On
     	mChapterId = bundle.getLong(ScriptureDbAdapter.TABLE_ID);
     	mBookId = bundle.getLong(ScriptureDbAdapter.BOOK_ID);
     	mVolumeId = bundle.getLong(ScriptureDbAdapter.VOLUME_ID);
-    	mCalledFrom = bundle.getInt(CALLING_ACTIVITY, ACTIVITY_BROWSE);
+    	mCalledFrom = bundle.getString(CALLING_ACTIVITY);
+    	if(mCalledFrom == null) mCalledFrom = BrowseScriptureActivity.class.getName();
+    	if(mCalledFrom.equals(ManageBookmarksActivity.class.getName()) 
+    	   || (bundle.getLong(ScriptureDbAdapter.BOOKMARK_POSITION) != 0) ){
+    		mScrollTo = (int)bundle.getLong(ScriptureDbAdapter.BOOKMARK_POSITION, 0);
+    	} else {
+    		mScrollTo = 0;
+    	}
     	
     	mTitleText.setText(title);
     	mBookButton.setText(bookTitle);
@@ -96,12 +106,14 @@ public class ReadChapterActivity extends Activity implements OnTouchListener, On
     	String title = mTitleText.getText().toString();
     	String bookTitle = mBookButton.getText().toString();
     	String volumeTitle = mVolumeButton.getText().toString();
+    	mScrollTo = mScrollView.getScrollY();
 
     	bundle.putString(ScriptureDbAdapter.CHAPTER_TITLE, title);
     	bundle.putString(ScriptureDbAdapter.BOOK_TITLE_SHORT, bookTitle);
     	bundle.putString(ScriptureDbAdapter.VOLUME_TITLE, volumeTitle);
     	bundle.putLong(ScriptureDbAdapter.TABLE_ID, mChapterId);
     	bundle.putLong(ScriptureDbAdapter.BOOK_ID, mBookId);
+    	bundle.putLong(ScriptureDbAdapter.BOOKMARK_POSITION, mScrollTo);
 
     	if(mAdapter != null) {
     		mAdapter.close();
@@ -124,20 +136,35 @@ public class ReadChapterActivity extends Activity implements OnTouchListener, On
     	super.onResume();
     	log("resuming");
     	populateList();
+    	
+		if (mScrollTo != -1){
+	    	mScrollView = (ScrollView)findViewById(R.id.scroll_view);
+	    	mScrollView.postDelayed(new Runnable(){
+				public void run() {
+					mScrollView.scrollBy(0, mScrollTo);
+					log("scrolling to: " + mScrollTo);
+					mScrollTo = -1;
+				}
+	    	}, 200);
+		}
+    }
+    
+    @Override
+    protected void onPause(){
+    	super.onPause();
+    	mScrollTo = mScrollView.getScrollY(); 
     }
     
     protected void setupGestures(){
         mGestureDetector = new GestureDetector(this); 
         mGestureDetector.setIsLongpressEnabled(true); 
-//    	TextView verses = (TextView)findViewById(R.id.verses);
-    	ScrollView scrollView = (ScrollView)findViewById(R.id.scroll_view);
-    	scrollView.setOnTouchListener(this);
-//    	verses.setOnTouchListener(this); 
+    	mScrollView.setOnTouchListener(this);
     }
     
     private Bundle populateReturnBundle(Bundle bundle, int returnBrowseMode){
     	
     	Cursor c = mAdapter.fetchSingleBook(mBookId.toString());
+    	mVolumeId = c.getLong(c.getColumnIndex(ScriptureDbAdapter.VOLUME_ID));
     	
         bundle.putLong(ScriptureDbAdapter.TABLE_ID, mBookId);
         bundle.putLong(ScriptureDbAdapter.BOOK_ID, mBookId);
@@ -226,6 +253,7 @@ public class ReadChapterActivity extends Activity implements OnTouchListener, On
     	Bundle extras = new Bundle();
     	extras.putLong(ScriptureDbAdapter.BOOK_ID, mBookId);
     	extras.putLong(ScriptureDbAdapter.CHAPTER_NUM, mChapterId);
+    	extras.putLong(ScriptureDbAdapter.BOOKMARK_POSITION, getScrollPosition());
     	i.putExtras(extras);
     	startActivityForResult(i, ACTIVITY_SELECT_BOOKMARK);
     }
@@ -258,21 +286,27 @@ public class ReadChapterActivity extends Activity implements OnTouchListener, On
     	dialog.show();
     }
     
+    protected int getScrollPosition(){
+    	return mScrollView.getScrollY();
+    }
+    
     protected void createBookmark(Dialog dialog){
     	EditText text = (EditText)dialog.findViewById(R.id.title_edit);
     	String title = text.getText().toString();
     	Integer book = new Integer(mBookId.intValue());
     	Integer chapter = new Integer(mChapterId.intValue());
-    	mAdapter.createBookmark(book, chapter, title);
+    	Integer scrollPosition = new Integer(getScrollPosition()); 
+    	mAdapter.createBookmark(book, chapter, title, scrollPosition);
     }
     
     private void goBack(int returnMode){
         Bundle bundle = new Bundle();
         bundle = populateReturnBundle(bundle, returnMode);
-        Intent mIntent = new Intent();
-        mIntent.putExtras(bundle);
-        setResult(RESULT_OK, mIntent);
+        Intent intent = new Intent(this, BrowseScriptureActivity.class);
+        intent.putExtras(bundle);
+        setResult(RESULT_OK, intent);
         mAdapter.close();
+        startActivity(intent);
         finish();
     }
     
@@ -308,7 +342,7 @@ public class ReadChapterActivity extends Activity implements OnTouchListener, On
     	
     	Spanned text = Html.fromHtml(builder.toString());
     	TextView verses = (TextView)findViewById(R.id.verses);
-    	verses.setText(text, TextView.BufferType.SPANNABLE);
+    	verses.setTextKeepState(text, TextView.BufferType.SPANNABLE);
     	verses.setTextSize(SetPreferencesActivity.getPreferedFontSize(this));
     }
 
@@ -326,18 +360,13 @@ public class ReadChapterActivity extends Activity implements OnTouchListener, On
 	}
 
 	public boolean onDown(MotionEvent e) {
-		ScrollView scrollView = (ScrollView)findViewById(R.id.scroll_view);
-		return scrollView.onTouchEvent(e);
+		return mScrollView.onTouchEvent(e);
 	}
 
 	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-//		Toast.makeText(this, "fling", Toast.LENGTH_SHORT).show();
-		log(Float.toString(e1.getX()));
-		log(Float.toString(e2.getX()));
 		float xDifference = e1.getX() - e2.getX();
 		float yDifference = e1.getY() - e2.getY();
 		if(Math.abs(xDifference) > Math.abs(yDifference)) {
-			log(Float.toString(xDifference));
 			if(xDifference > 0) {
 		    	openNext();
 			} else {
@@ -348,7 +377,6 @@ public class ReadChapterActivity extends Activity implements OnTouchListener, On
 	}
 
 	public void onLongPress(MotionEvent e) {
-		//Toast.makeText(this, "long press", Toast.LENGTH_SHORT).show();
 	}
 
 	public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {

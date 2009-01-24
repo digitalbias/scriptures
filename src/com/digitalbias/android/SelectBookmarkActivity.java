@@ -20,6 +20,7 @@ public class SelectBookmarkActivity extends ListActivity {
 	
 	private Long mBookId;
 	private Long mChapterId;
+	private Long mPosition;
     
 	/** Called when the activity is first created. */
     @Override
@@ -33,6 +34,7 @@ public class SelectBookmarkActivity extends ListActivity {
         Bundle extras = getIntent().getExtras();
         mBookId = extras.getLong(ScriptureDbAdapter.BOOK_ID);
         mChapterId = extras.getLong(ScriptureDbAdapter.CHAPTER_NUM);
+        mPosition = extras.getLong(ScriptureDbAdapter.BOOKMARK_POSITION);
         populateList(extras);
     }
     
@@ -74,7 +76,7 @@ public class SelectBookmarkActivity extends ListActivity {
     }
     
     protected void selectBookmark(final long bookmarkId){
-		mAdapter.updateBookmark(new Long(bookmarkId), mBookId, mChapterId);
+		mAdapter.updateBookmark(new Long(bookmarkId), mBookId, mChapterId, mPosition);
         Bundle bundle = new Bundle();
         Intent intent = new Intent();
         intent.putExtras(bundle);

@@ -33,7 +33,7 @@ public class BrowseScriptureActivity extends ListActivity {
 	private static final int ACTIVITY_BOOKMARK = 2;
 	private static final int ACTIVITY_READ_CHAPTER = 3;
 
-	public static boolean DEBUG = true;
+	public static boolean DEBUG = false;
 	
 	private Cursor mCursor;
 	private ScriptureDbAdapter mAdapter;
@@ -54,6 +54,17 @@ public class BrowseScriptureActivity extends ListActivity {
         	getGoodDatabase();
         }
         closeDatabase();
+    }
+    
+    @Override
+    public void onNewIntent(Intent intent){
+    	log("New INTENT");
+    	Bundle extras = intent.getExtras();
+    	mVolumeId = extras.getLong(ScriptureDbAdapter.VOLUME_ID);
+    	mBookId = extras.getLong(ScriptureDbAdapter.BOOK_ID);
+    	mBrowseMode = extras.getInt(BROWSE_MODE);
+    	log(mVolumeId + " : " + mBookId + " : " + mBrowseMode);
+    	beginBrowsing(intent);
     }
     
     private void initializeDatabase() {
@@ -207,6 +218,7 @@ public class BrowseScriptureActivity extends ListActivity {
         i.putExtra(ScriptureDbAdapter.BOOK_TITLE_SHORT, getShortBookTitle(mBookId));
         i.putExtra(ScriptureDbAdapter.CHAPTER_TITLE, c.getString(
                 c.getColumnIndexOrThrow(ScriptureDbAdapter.CHAPTER_TITLE)));
+        i.putExtra(ReadChapterActivity.CALLING_ACTIVITY, this.getClass().getName());
         
         startActivityForResult(i, ACTIVITY_READ_CHAPTER);
     }

@@ -2,6 +2,8 @@ package com.digitalbias.android;
 
 import java.io.File;
 
+import com.digitalbias.db.migration.DatabaseUpgrader;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -16,7 +18,9 @@ import android.widget.Toast;
 
 public class ScriptureDbAdapter {
 
-    public static final String TABLE_ID = "_id";
+    protected static final int DATABASE_VERSION = 1; 
+    
+	public static final String TABLE_ID = "_id";
     
     public static final String VOLUME_ID = "volume_id";
     public static final String VOLUME_TITLE = "volume_title";
@@ -40,8 +44,9 @@ public class ScriptureDbAdapter {
     public static final String BOOKMARK_CHAPTER = "chapter";
     public static final String BOOKMARK_CHAPTER_TITLE = "chapter_title";
     public static final String BOOKMARK_TITLE = "title";
+    public static final String BOOKMARK_POSITION = "position";
     
-    private static final String VALIDATAION_QUERY = "SELECT COUNT(*) as book_count FROM sqlite_master WHERE name = 'books'";
+    private static final String GET_DATABASE_VERSION = "SELECT value FROM metadata WHERE key = 'database_version'";
     
 	private static final String VOLUME_QUERY_STRING = "SELECT volume_id as _id, volume_title, volume_title_long FROM volumes ORDER BY _id";
 	private static final String BOOK_QUERY_STRING = "SELECT book_id as _id, book_title, book_title_short, book_title_jst, book_subtitle, num_chapters FROM books WHERE volume_id = ? ORDER BY _id";
@@ -58,16 +63,14 @@ public class ScriptureDbAdapter {
 	
 	private static final String GET_MAX_BOOK_ID = "SELECT MAX(book_id) AS book_id FROM books";
 	
-	private static final String CREATE_BOOKMARKS_TABLE = "CREATE TABLE bookmarks (_id INTEGER PRIMARY KEY, book_id INTEGER, chapter INTEGER, title TEXT);";
-	private static final String ALL_BOOKMARKS_QUERY = "SELECT DISTINCT m._id AS _id, (b.book_title || ' ' || v.chapter) AS chapter_title, m.book_id as book_id , m.chapter as chapter, m.title as title FROM verses v, books b, bookmarks m WHERE v.book_id = b.book_id AND m.book_id = v.book_id AND v.chapter = m.chapter ORDER BY book_id, chapter";
-	private static final String SINGLE_BOOKMARK_QUERY = "SELECT DISTINCT m._id AS _id, (b.book_title || ' ' || v.chapter) AS chapter_title, m.book_id as book_id , m.chapter as chapter, m.title as title FROM verses v, books b, bookmarks m WHERE v.book_id = b.book_id AND m.book_id = v.book_id AND v.chapter = m.chapter AND m._id = ?";
-	private static final String NEW_BOOKMARK = "INSERT INTO bookmarks (book_id, chapter, title) VALUES (?, ?, ?)";
-	private static final String UPDATE_BOOKMARK = "UPDATE bookmarks SET book_id = ?, chapter = ?, title = ? WHERE _id = ?";
-	private static final String MOVE_BOOKMARK = "UPDATE bookmarks SET book_id = ?, chapter = ? WHERE _id = ?";
+	private static final String ALL_BOOKMARKS_QUERY = "SELECT DISTINCT m._id AS _id, (b.book_title || ' ' || v.chapter) AS chapter_title, m.book_id as book_id , m.chapter as chapter, m.title as title, m.position as position FROM verses v, books b, bookmarks m WHERE v.book_id = b.book_id AND m.book_id = v.book_id AND v.chapter = m.chapter ORDER BY book_id, chapter";
+	private static final String SINGLE_BOOKMARK_QUERY = "SELECT DISTINCT m._id AS _id, (b.book_title || ' ' || v.chapter) AS chapter_title, m.book_id as book_id , m.chapter as chapter, m.title as title, m.position as position FROM verses v, books b, bookmarks m WHERE v.book_id = b.book_id AND m.book_id = v.book_id AND v.chapter = m.chapter AND m._id = ?";
+	private static final String NEW_BOOKMARK = "INSERT INTO bookmarks (book_id, chapter, title) VALUES (?, ?, ?, ?)";
+	private static final String UPDATE_BOOKMARK = "UPDATE bookmarks SET book_id = ?, chapter = ?, title = ?, position = ? WHERE _id = ?";
+	private static final String MOVE_BOOKMARK = "UPDATE bookmarks SET book_id = ?, chapter = ?, position = ? WHERE _id = ?";
 	private static final String DELETE_BOOKMARK = "DELETE FROM bookmarks WHERE _id = ?";
 
 	
-	private static final String CREATE_NOTES_TABLE = "CREATE TABLE notes (_id INTEGER PRIMARY KEY, book_id INTEGER, chapter INTEGER, verse_id INTEGER, note TEXT);";
 	private static final String ALL_NOTES_QUERY = "SELECT _id, book_id, chapter, verse_id, note FROM notes";
 	private static final String CHAPTER_NOTES_QUERY = "SELECT _id, book_id, chapter, verse_id, note FROM notes WHERE book_id = ? AND chapter = ?";
 	private static final String NOTES_QUERY_EXACT_SEARCH = "SELECT _id, book_id, chapter, verse_id, note FROM notes WHERE note LIKE '%?%'";
@@ -76,13 +79,10 @@ public class ScriptureDbAdapter {
 	private static final String DELETE_NOTE = "DELETE FROM notes WHERE _id = ?";
 
 	
-	private static final String CREATE_MARKINGS_TABLE = "CREATE TABLE markings (_id INTEGER PRIMARY KEY, book_id INTEGER, chapter INTEGER, verse_id INTEGER, mark_type INTEGER, color TEXT);";
 	private static final String ALL_MARKINGS_QUERY = "SELECT _id, book_id, chapter, verse_id, mark_type, color FROM markings";
 	private static final String CHAPTER_MARKINGS_QUERY = "SELECT _id, book_id, chapter, verse_id, mark_type, color FROM markings WHERE book_id = ? AND chapter = ?";
 
 	
-	private static final String TABLE_EXISTS_QUERY = "SELECT count(*) AS count FROM sqlite_master WHERE type = 'table' AND name = ?";
-
 	private final Context mCtx;
     private static SQLiteDatabase mDatabase;
     private static int connectionCount = 0;
@@ -99,7 +99,7 @@ public class ScriptureDbAdapter {
     public ScriptureDbAdapter open() {
     	if(mDatabase == null){
 		    String databaseLocation = getDatabaseLocation();
-	    	mDatabase = SQLiteDatabase.openDatabase(databaseLocation, null,  SQLiteDatabase.OPEN_READWRITE);
+	    	mDatabase = SQLiteDatabase.openDatabase(databaseLocation, null,  SQLiteDatabase.OPEN_READWRITE | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
     	}
     	connectionCount = connectionCount + 1;
     	return this;
@@ -127,55 +127,45 @@ public class ScriptureDbAdapter {
     	return result;
     }
     
+    public static int getDatabaseVersion(SQLiteDatabase database){
+    	int result = -1; 
+    	Cursor cursor = null;
+    	try {
+	    	cursor = database.rawQuery(GET_DATABASE_VERSION, null);
+	    	cursor.moveToFirst();
+	    	result = Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow("value")));
+    	} catch (SQLiteException e) {
+    	} finally {
+	    	if(cursor != null) cursor.close();
+    	}
+    	return result;
+    }
+
     protected boolean isValidDatabase(){
     	boolean result = false;
     	SQLiteDatabase database = null;
-    	Cursor cursor = null;
     	try {
-	    	database = SQLiteDatabase.openDatabase(getDatabaseLocation(), null, SQLiteDatabase.OPEN_READWRITE);
-	    	cursor = database.rawQuery(VALIDATAION_QUERY, null);
-	    	cursor.moveToFirst();
-	    	int book_count = cursor.getInt(cursor.getColumnIndexOrThrow("book_count")); 
-	    	result = book_count >= 1;
-	    	if (result) createMissingTables(database);
+	    	database = SQLiteDatabase.openDatabase(getDatabaseLocation(), null, SQLiteDatabase.OPEN_READWRITE | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
+	    	int databaseVersion = getDatabaseVersion(database);
+	    	result = databaseVersion == DATABASE_VERSION;
+	    	if (!result) {
+	    		upgrade(database);
+	    		result = DATABASE_VERSION == getDatabaseVersion(database);
+	    	}
     	} catch (SQLiteException e){
     		log("db", "sqlite exception", e);
     	} finally {
-	    	if(cursor != null) cursor.close();
 	    	if(database != null) database.close();
     	}
     	return result;
     }
 
-    protected void createMissingTables(SQLiteDatabase database){
-    	log("db","creating missing tables");
-    	if(!tableExists(database, "bookmarks")){
-        	//database.execSQL("DROP TABLE bookmarks");
-        	database.execSQL(CREATE_BOOKMARKS_TABLE);
-    	} 
-    	if(!tableExists(database, "notes")){
-	    	database.execSQL(CREATE_NOTES_TABLE);
+    public void upgrade(SQLiteDatabase database){
+    	int databaseVersion = getDatabaseVersion(database);
+    	while(databaseVersion != DATABASE_VERSION) {
+    		DatabaseUpgrader.upgradeDatabase(database);
+    		databaseVersion = getDatabaseVersion(database);
     	}
-    	if(!tableExists(database, "markings")){
-	    	database.execSQL(CREATE_MARKINGS_TABLE);
-    	}
-    }
-    
-    protected boolean tableExists(SQLiteDatabase database, String tableName){
-    	boolean result = false;
-    	
-    	Cursor cursor = null;
-    	try {
-        	String[] args = new String[] { tableName };
-    		cursor = queryAndMoveToFirst(database, TABLE_EXISTS_QUERY, args);
-    		int count = cursor.getInt(cursor.getColumnIndex("count"));
-    		result = count > 0;
-    	} catch (SQLiteException e){
-    	} catch (NullPointerException e){
-    	} finally {
-    		if(cursor != null) cursor.close();
-    	}
-    	return result;
     }
     
     public void close() {
@@ -330,24 +320,25 @@ public class ScriptureDbAdapter {
         return query(ALL_BOOKMARKS_QUERY, args);
     }
     
-    public void createBookmark(Integer book, Integer chapter, String title){
+    public void createBookmark(Integer book, Integer chapter, String title, Integer position){
 //    	Object[] args = new Object[] { book, chapter, title };
     	ContentValues values = new ContentValues();
     	values.put("book_id", book);
     	values.put("chapter", chapter);
     	values.put("title", title);
+    	values.put("position", position);
     	long rowId = mDatabase.insertOrThrow("bookmarks", "", values);
 //    	executeSQL(NEW_BOOKMARK, args);
     	log("db","bookmark created: " + Long.toString(rowId));
     }
     
-    public void updateBookmark(Long bookmarkId, Long book, Long chapter, String title){
-    	Object[] args = new Object[] { book, chapter, title, bookmarkId };
+    public void updateBookmark(Long bookmarkId, Long book, Long chapter, String title, Long position){
+    	Object[] args = new Object[] { book, chapter, title, position, bookmarkId };
     	executeSQL(UPDATE_BOOKMARK, args);
     }
 
-	public void updateBookmark(Long bookmarkId, Long book, Long chapter) {
-    	Object[] args = new Object[] { book, chapter, bookmarkId };
+	public void updateBookmark(Long bookmarkId, Long book, Long chapter, Long position) {
+    	Object[] args = new Object[] { book, chapter, position, bookmarkId };
     	executeSQL(MOVE_BOOKMARK, args);
 	}
 	

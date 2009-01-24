@@ -46,9 +46,12 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" 
         android:layout_marginTop="5px">
-                
+<!-- 
+ 			android:layout_below="@id/scroll_view"
+ 			android:layout_below="@id/chapter_title"
+-->
+
 		<TextView android:id="@+id/verses" 
-			android:layout_below="@id/scroll_view"
 			android:bufferType="spannable"
 			android:layout_height="fill_parent" 
 			android:scrollbars="vertical" 

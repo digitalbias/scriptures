@@ -1,0 +1,31 @@
+Stuff to still to fix from this version before releasing on the market:
+
+* Enable the “use screen orientation” preference
+
+Once the 0.3.0 version is complete, then the following is the feature/release plan:
+
+* 0.4.0: Search
+* 0.5.0: Highlighting, Notes
+* 0.6.0: Update checker feature (is that even English?) (may or may not be included)
+* 1.0 Touch up, a license screen, an about screen
+
+Once the 1.0 version is out, then the serious work on the import utility will begin. The goal is to allow people to create their own content and read it on their own devices using the Scripture program. If they so desire, it could be submitted and included in the listing for general download via the Scripture program itself.
+
+
+v 0.3.0 Release
+
+* Decrease database download times, using compression on files being downloaded. Initial data indicates a decrease in file sizes by as much as 4x for both LDS and KJV scriptures. Hopefully that will reduce the time for downloads as well.
+* After opening the bookmark page and selecting a bookmark, when you click on a history button you are taken back to the bookmark page instead of a scripture listing.  
+
+v 0.3.0 beta 3
+Here’s an early Christmas present: A new beta for the scriptures program. Changes from the previous beta include:
+
+* Can move a bookmark from one chapter to another. Just select the “move bookmark” menu item, then select the bookmark in the list, and the bookmark will be updated to the new location you’re at.
+* Added a new spot for a preference that will (but does not yet), allow you to turn off the screen orientation switching
+* I’m still working on the bookmark nav button issue I mentioned in the previous version update.
+* Other minor improvements
+
+There was an incremental release between this beta and the previous beta that I’ve been running on my personal phone which I did not let out…mostly because it involved a total refactoring of the scripture listing activities and I didn’t want to blowup everybody’s scripture program. I’ve been running it for a couple weeks now, and I’m including the changes in this version. There should not be any change in functionality, but if there are changes from what you remember, please comment. There is one fix from that incremental version to this:
+
+* Clicking the back button when browsing the scripture listings will now move back in the history instead of quitting the app. (This is what it should be like before the code refactoring)
+
