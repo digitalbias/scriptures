@@ -140,6 +140,11 @@ public class SetPreferencesActivity extends Activity {
         return settings.getInt(VERSE_SIZE_FONT_PREF, SMALL_FONT_SIZE);
     }
     
+    public static boolean getOrientationPreference(Context context){
+    	SharedPreferences settings = context.getSharedPreferences(PREFS_NAME, 0);
+        return settings.getBoolean(SCREEN_ORIENTATION_PREF, DEFAULT_SCREEN_ORIENTATION);
+    }
+    
     protected static int getThemePreference(String themeValue){
     	int result = android.R.style.Theme_Light_NoTitleBar;
     	if(themeValue.indexOf("Dark") >= 0){
@@ -229,7 +234,14 @@ public class SetPreferencesActivity extends Activity {
         Bundle bundle = new Bundle();
         Intent intent = new Intent();
         intent.putExtras(bundle);
+        log("setting result code to: " + resultCode);
         setResult(resultCode, intent);
         finish();
+    }
+    
+    private void log(String message){
+    	if(BrowseScriptureActivity.DEBUG){
+    		Log.d("Preferences", message);
+    	}
     }
 }

@@ -43,8 +43,6 @@ public class DownloadDatabaseActivity extends ListActivity {
 	private List<DatabaseLocation> mDatabaseList;
 	private static final String DATABASE_LIST_URI = "http://scriptures.digitalbias.com/compressed_scripture_list.xml";
 //	private static final String DATABASE_LIST_URI = "http://scriptures.digitalbias.com/scripture_list.xml";
-//	private static final String DATABASE_LIST_URI = "http://androidscriptures.googlecode.com/files/scripture_list.xml.xml";
-//	private static final String DATABASE_LIST_URI = "http://www.mediafire.com/file/jyzbdngleji/scripture_list.xml";
     private static final int IO_BUFFER_SIZE = 4 * 1024;
     private ProgressBar mProgressBar;
     private TextView mTextView;
@@ -262,11 +260,18 @@ public class DownloadDatabaseActivity extends ListActivity {
     	return result;
     }
     
+    protected String removeExtension(String filename){
+    	int end = filename.indexOf('.');
+    	return filename.substring(0,end);
+    }
+    
     protected void downloadDatabase(URL url){
     	try {
     		File destinationFile = new File(SetPreferencesActivity.getDatabaseDirectory() + getFilename(url));
     		if(!destinationFile.getParentFile().exists()) destinationFile.getParentFile().mkdirs();
-    		if(destinationFile.exists()){
+    		File unzipFile = new File(SetPreferencesActivity.getDatabaseDirectory() + removeExtension(getFilename(url)) + ".db");
+    		Log.d("FileDownload",unzipFile.getAbsolutePath());
+    		if(unzipFile.exists()){
 				showOverwriteFileDialog(url, destinationFile);
     		} else {
 				getDatabase(url, destinationFile);
@@ -288,27 +293,25 @@ public class DownloadDatabaseActivity extends ListActivity {
     }
     
     protected void showOverwriteFileDialog(final URL url, final File file) throws IOException{
-    	if(file.exists()){
-        	AlertDialog.Builder builder = new AlertDialog.Builder(this);
-    		builder.setMessage("Database already exists. Overwrite?");
-    		builder.setTitle("Invalid database");
-    		builder.setNegativeButton("No", new DialogInterface.OnClickListener(){
-    			public void onClick(DialogInterface dialog, int which){
-    			}
-    		});
-    		builder.setPositiveButton("Yes", new DialogInterface.OnClickListener(){
-    			public void onClick(DialogInterface dialog, int which){
-    				try {
-    					getDatabase(url, file);
-    				} catch (IOException e){
-    					showFailure(e.getMessage());
-    				}
-    			}
-    		});
-    		builder.setCancelable(false);
-    		AlertDialog dialog = builder.create();
-    		dialog.show();
-    	}
-    }
+    	AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setMessage("Database already exists. Overwrite?");
+		builder.setTitle("Invalid database");
+		builder.setNegativeButton("No", new DialogInterface.OnClickListener(){
+			public void onClick(DialogInterface dialog, int which){
+			}
+		});
+		builder.setPositiveButton("Yes", new DialogInterface.OnClickListener(){
+			public void onClick(DialogInterface dialog, int which){
+				try {
+					getDatabase(url, file);
+				} catch (IOException e){
+					showFailure(e.getMessage());
+				}
+			}
+		});
+		builder.setCancelable(false);
+		AlertDialog dialog = builder.create();
+		dialog.show();
+	}
     
 }

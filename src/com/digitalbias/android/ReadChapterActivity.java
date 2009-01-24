@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.text.Html;
@@ -16,6 +17,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.GestureDetector.OnGestureListener;
+import android.view.OrientationListener; 
 import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.EditText;
@@ -44,6 +46,9 @@ public class ReadChapterActivity extends Activity implements OnTouchListener, On
 	private ScrollView mScrollView; 
 	
 	private GestureDetector mGestureDetector; 
+//    private SensorManager mSensorManager;
+    private OrientationListener mOrientationListener;
+
 	protected Context mContext;
 	protected String mCalledFrom;
 	protected int mScrollTo;
@@ -132,6 +137,13 @@ public class ReadChapterActivity extends Activity implements OnTouchListener, On
     }
     
     @Override
+    protected void onStop() {
+		if(SetPreferencesActivity.getOrientationPreference(this)){
+			mOrientationListener.disable();
+		}
+        super.onStop();
+    }
+
     protected void onResume(){
     	super.onResume();
     	log("resuming");
@@ -141,11 +153,28 @@ public class ReadChapterActivity extends Activity implements OnTouchListener, On
 	    	mScrollView = (ScrollView)findViewById(R.id.scroll_view);
 	    	mScrollView.postDelayed(new Runnable(){
 				public void run() {
-					mScrollView.scrollBy(0, mScrollTo);
+					mScrollView.scrollTo(0, mScrollTo);
 					log("scrolling to: " + mScrollTo);
 					mScrollTo = -1;
 				}
 	    	}, 200);
+		}
+		if(mOrientationListener == null ) {
+			mOrientationListener = new OrientationListener(this){
+				@Override
+				public void onOrientationChanged(int orientation) {
+					if(orientation >= 225 && orientation <= 300){
+						setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+						//Log.d("Orientation", "landscape");
+					} else {
+						setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+						//Log.d("Orientation", "portrait");
+					}
+				}
+			};
+		}
+		if(SetPreferencesActivity.getOrientationPreference(this)){
+			mOrientationListener.enable();
 		}
     }
     

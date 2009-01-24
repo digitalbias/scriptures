@@ -1,7 +1,5 @@
 Stuff to still to fix from this version before releasing on the market:
 
-* Enable the “use screen orientation” preference
-
 Once the 0.3.0 version is complete, then the following is the feature/release plan:
 
 * 0.4.0: Search
@@ -15,7 +13,9 @@ Once the 1.0 version is out, then the serious work on the import utility will be
 v 0.3.0 Release
 
 * Decrease database download times, using compression on files being downloaded. Initial data indicates a decrease in file sizes by as much as 4x for both LDS and KJV scriptures. Hopefully that will reduce the time for downloads as well.
+* The bookmark now saves where in the scroll view you have created the bookmark instead of just being based on the chapter. 
 * After opening the bookmark page and selecting a bookmark, when you click on a history button you are taken back to the bookmark page instead of a scripture listing.  
+* Enable the “use screen orientation” preference
 
 v 0.3.0 beta 3
 Here’s an early Christmas present: A new beta for the scriptures program. Changes from the previous beta include:

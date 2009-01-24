@@ -33,7 +33,7 @@ public class BrowseScriptureActivity extends ListActivity {
 	private static final int ACTIVITY_BOOKMARK = 2;
 	private static final int ACTIVITY_READ_CHAPTER = 3;
 
-	public static boolean DEBUG = false;
+	public static boolean DEBUG = true;
 	
 	private Cursor mCursor;
 	private ScriptureDbAdapter mAdapter;
@@ -265,6 +265,7 @@ public class BrowseScriptureActivity extends ListActivity {
         if (resultCode == RESULT_OK) {
         	switch (requestCode) {
         		case ACTIVITY_PREFERENCES:
+        			log("preferences came back");
         	    	stopManagingCursor(mCursor);
         	        applyPreferences();
         	        initializeDatabase();
@@ -308,6 +309,7 @@ public class BrowseScriptureActivity extends ListActivity {
     
     public void openPreferences(){
         Intent i = new Intent(this, SetPreferencesActivity.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
         startActivityForResult(i, ACTIVITY_PREFERENCES);
     }
     
