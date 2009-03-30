@@ -1,0 +1,6 @@
+
+Name of App: Scriptures
+Name of Developer: David Mitchell
+URL: http://scriptures.digitalbias.com/
+Description: Study your scriptures without having to connect to the internet. Currently you can read either the King James Holy Bible or the LDS Standard Works without having to carry around the paper versions.
+

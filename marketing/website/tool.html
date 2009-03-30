@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta name="description" content="A scripture application for the Android platform" />
+	<meta name="keywords" content="android,scriptures,bible" />
+	<meta name="author" content="David Mitchell" />
+	<link rel="stylesheet" type="text/css" href="andreas08.css" title="andreas08" media="screen,projection" />
+	<title>Scriptures</title>
+</head>
+
+<body>
+<div id="container" >
+	<div id="header">
+		<h1>Scriptures</h1>
+		<h2>an android application</h2>
+	</div>
+
+	<div id="navigation">
+		<ul>
+			<li><a href="index.html">Home</a></li>
+			<li><a href="gallery.html">Gallery</a></li>
+			<li><a href="faq.html">FAQ</a></li>
+			<li><a href="support.html">Support</a></li>
+			<li><a href="downloads.html">Downloads</a></li>
+			<li class="selected"><a href="#">"The Tool"</a></li>
+		</ul>
+	</div>
+
+	<div id="content">
+		<h2>"The Tool"</h2>
+		<p>"The Tool" has always been one of the parts of this effort. From the very get go, I wanted the application to be something that people could use for their scripture needs, independent of what I've done with it. <a href="http://www.yanceyware.com/">YanCEyWare</a> is a great application for Windows Mobile devices, and while I don't expect this particullar application to do the same things it does, creating a tool so people can import their own content into either new or existing databases is still a part of this project. If there is a place where help could be used, it's with developing this tool.</p>
+		
+		<h3>Tool Specification/Story</h3>
+<p>During the process of writing the Scripture application I also worked on some code that would import the scriptures from the LDS Church's website. It was intended to be a one-time shot and so I did not take a lot of thought into making it clean or in choosing a technology that would be very universal. Instead I used something that was easy to use and work with, and I ended up leaving it alone after I found the <a href="http://scriptures.nephi.org/">Mormon Documentation Project</a>. I haven't done anything with it since. I started a Java based project for the import tool, but there isn't anything worth saving there either. So feel free to start from scratch. If you want the original code I worked on (it's ruby code using Active Record, hpricot, and builder) you are welcome to take a look at it, however, it's very ugly as I wasn't even looking to distribute it.</p>
+
+<p>Here are the features for a first release:
+	<ul>
+		<li>Command-line interface (would make it easy for scripting by other people, and possibly a web based client at some point)</li>
+		<li>GUI Interface (Easy for users to use)</li>
+		<li>Convert THmL</li>
+		<li>Convert OSIS</li>
+		<li>Should be able to import into existing database, as well as create entirely new database</li>
+	</ul>
+</p>
+
+<h3>THmL and OSIS</h3>
+<p>There is a lot of scriptural information and translations out there that use THmL and OSIS, and we can leverage these sources as both test cases as well as final results for publishing to the scriptures.digitalbias.com website. The idea is that there are a lot of people out there that want other content, like the bible in the ASV translation or they want the LDS Hymns. We can provide these to them without requiring them to create their own. If they want to import them into their own databases....they can use the tool. If they just want to use these databases and switch between different sources, they can do it without using the tool. Totally up to them.</p>
+
+<p>If they want to add their own content, like say lectures or other scriptural based commentaries they could mark them up in THmL and then import them into their databases. It would be nice to have the tool convert from HTML into THmL, but with the less structured format of HTML it would be quite the undertaking to do so and may not be worth the effort as there may be other software programs out there (like <a href="http://www.e-sword.net/">eSword</a>) that may do the same thing already. If you want more content, <a href="http://gobible.jolon.org/">GoBible</a> has <a href="http://code.google.com/p/gobible/source/browse/#svn/trunk/Collections">quite a few translations</a>, most of which are THmL.</p>
+
+	</div>
+
+	<div id="footer">
+		<p>&copy; 2009 David Mitchell | Original design by <a href="http://andreasviklund.com/">Andreas Viklund</a></p>
+	</div>
+
+	</div>
+</body>
+</html>

@@ -264,12 +264,18 @@ public class ReadChapterActivity extends Activity implements OnTouchListener, On
     	Bundle extras = mAdapter.getPreviousBookAndChapter(mBookId,mChapterId);
     	setMembers(extras);
     	populateList();
+    	if(SetPreferencesActivity.getScrollToTopOnChange(mContext)){
+	    	mScrollView.scrollTo(0, 0);
+    	}
     }
 
     public void openNext(){
     	Bundle extras = mAdapter.getNextBookAndChapter(mBookId,mChapterId);
     	setMembers(extras);
     	populateList();
+    	if(SetPreferencesActivity.getScrollToTopOnChange(mContext)){
+	    	mScrollView.scrollTo(0, 0);
+    	}
     }
     
     protected void manageBookmarks(){

@@ -1,74 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout  xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+       android:id="@+id/scroll_view"
+	android:layout_below="@id/chapter_title"
+       android:layout_width="fill_parent"
+       android:layout_height="fill_parent" 
+       android:layout_marginTop="5px">
 
-    <TextView android:id="@+id/databaseText" 
-              android:layout_width="fill_parent" 
-              android:layout_height="wrap_content" 
-              android:text="Database Location"
-              />
-
-    <EditText android:id="@+id/databaseEntry" 
-              android:layout_height="wrap_content" 
-              android:layout_below="@id/databaseText" 
-              android:layout_width="fill_parent"/>
-  
-    <Button android:id="@+id/chooseFileButton" 
-    	android:layout_width="wrap_content" 
-    	android:layout_height="wrap_content"
-    	android:layout_below="@id/databaseEntry"
-		android:text="Choose file..."
-    	/>
-    	
-	<TextView android:id="@+id/themeText" 
-        android:layout_width="fill_parent" 
-        android:layout_height="wrap_content" 
-        android:text="Theme"
-        android:layout_below="@id/chooseFileButton" 
-        />
-
-	<Spinner android:id="@+id/themeSpinner" 
-			android:layout_below="@id/themeText" 
-			android:layout_width="fill_parent" 
-			android:layout_height="wrap_content"
-			/>
-
-	<TextView android:id="@+id/fontSizeText" 
-        android:layout_width="fill_parent" 
-        android:layout_height="wrap_content" 
-        android:text="Verse Font Size"
-        android:layout_below="@id/themeSpinner" 
-        />
-        
-	<Spinner android:id="@+id/fontSizeSpinner" 
-			android:layout_below="@id/fontSizeText" 
-			android:layout_width="fill_parent" 
-			android:layout_height="wrap_content"
-			/>
-			
-	<CheckBox android:id="@+id/screenOrientationCheckbox" 
-        android:layout_width="fill_parent" 
-        android:layout_height="wrap_content" 
-        android:text="Use screen orientation"
-        android:layout_below="@id/fontSizeSpinner" 
-        android:checked="true"
-        />
-        
-    <Button android:id="@+id/okButton" 
-            android:layout_width="wrap_content" 
-            android:layout_height="wrap_content" 
-            android:layout_below="@id/screenOrientationCheckbox"
-            android:layout_alignParentRight="true"
-            android:layout_marginLeft="10px"
-            android:text="OK" />
-
-    <Button android:id="@+id/cancelButton"
-    		android:layout_width="wrap_content" 
-            android:layout_height="wrap_content"
-            android:layout_toLeftOf="@id/okButton"
-            android:layout_alignTop="@id/okButton"
-            android:text="Cancel" />
-            
-</RelativeLayout>
+	<RelativeLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content">
+	
+	    <TextView android:id="@+id/databaseText" 
+	              android:layout_width="fill_parent" 
+	              android:layout_height="wrap_content" 
+	              android:text="Database Location"
+	              />
+	
+	    <EditText android:id="@+id/databaseEntry" 
+	              android:layout_height="wrap_content" 
+	              android:layout_below="@id/databaseText" 
+	              android:layout_width="fill_parent"/>
+	  
+	    <Button android:id="@+id/chooseFileButton" 
+	    	android:layout_width="wrap_content" 
+	    	android:layout_height="wrap_content"
+	    	android:layout_below="@id/databaseEntry"
+			android:text="Choose file..."
+	    	/>
+	    	
+		<TextView android:id="@+id/themeText" 
+	        android:layout_width="fill_parent" 
+	        android:layout_height="wrap_content" 
+	        android:text="Theme"
+	        android:layout_below="@id/chooseFileButton" 
+	        />
+	
+		<Spinner android:id="@+id/themeSpinner" 
+				android:layout_below="@id/themeText" 
+				android:layout_width="fill_parent" 
+				android:layout_height="wrap_content"
+				/>
+	
+		<TextView android:id="@+id/fontSizeText" 
+	        android:layout_width="fill_parent" 
+	        android:layout_height="wrap_content" 
+	        android:text="Verse Font Size"
+	        android:layout_below="@id/themeSpinner" 
+	        />
+	        
+		<Spinner android:id="@+id/fontSizeSpinner" 
+				android:layout_below="@id/fontSizeText" 
+				android:layout_width="fill_parent" 
+				android:layout_height="wrap_content"
+				/>
+				
+		<CheckBox android:id="@+id/screenOrientationCheckbox" 
+	        android:layout_width="fill_parent" 
+	        android:layout_height="wrap_content" 
+	        android:text="Use screen orientation"
+	        android:layout_below="@id/fontSizeSpinner" 
+	        android:checked="true"
+	        />
+	        
+		<CheckBox android:id="@+id/scrollToTop" 
+	        android:layout_width="fill_parent" 
+	        android:layout_height="wrap_content" 
+	        android:text="Go to top on chapter change"
+	        android:layout_below="@id/screenOrientationCheckbox" 
+	        android:checked="true"
+	        />
+	
+	    <Button android:id="@+id/okButton" 
+	            android:layout_width="wrap_content" 
+	            android:layout_height="wrap_content" 
+	            android:layout_below="@id/scrollToTop"
+	            android:layout_alignParentRight="true"
+	            android:layout_marginLeft="10px"
+	            android:text="OK" />
+	
+	    <Button android:id="@+id/cancelButton"
+	    		android:layout_width="wrap_content" 
+	            android:layout_height="wrap_content"
+	            android:layout_toLeftOf="@id/okButton"
+	            android:layout_alignTop="@id/okButton"
+	            android:text="Cancel" />
+	            
+	</RelativeLayout>
+</ScrollView>

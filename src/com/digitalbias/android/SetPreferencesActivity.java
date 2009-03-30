@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 
 public class SetPreferencesActivity extends Activity {
+	
 	protected static final String PREFS_NAME = "ScripturePrefs";
 
 	protected static final String DEFAULT_THEME = "Theme_Light";
@@ -30,6 +31,9 @@ public class SetPreferencesActivity extends Activity {
 	protected static final boolean DEFAULT_SCREEN_ORIENTATION = true;
 	protected static final String SCREEN_ORIENTATION_PREF = "useScreenOrientation";
 
+	protected static final String SCROLL_TO_TOP_ON_CHAPTER_CHANGE_PREF = "scrollToTopOnChapterChange";
+	protected static final boolean SCROLL_TO_TOP_ON_CHAPTER_CHANGE_DEFAULT = true;
+	
 	protected static final int SMALL_FONT = 0;
 	protected static final int MEDIUM_FONT = 1;
 	protected static final int LARGE_FONT = 2;
@@ -89,6 +93,10 @@ public class SetPreferencesActivity extends Activity {
         CheckBox checkbox = (CheckBox)findViewById(R.id.screenOrientationCheckbox);
         checkbox.setChecked(useScreen);
 
+        boolean scrollToTop = settings.getBoolean(SCROLL_TO_TOP_ON_CHAPTER_CHANGE_PREF, SCROLL_TO_TOP_ON_CHAPTER_CHANGE_DEFAULT);
+        checkbox = (CheckBox)findViewById(R.id.scrollToTop);
+        checkbox.setChecked(scrollToTop);
+
         Button button = (Button)findViewById(R.id.okButton);
         button.setOnClickListener(new View.OnClickListener(){
         	public void onClick(View v){
@@ -129,6 +137,11 @@ public class SetPreferencesActivity extends Activity {
         }
     }
 
+    public static boolean getScrollToTopOnChange(Context context){
+    	SharedPreferences settings = context.getSharedPreferences(PREFS_NAME, 0);
+        return settings.getBoolean(SCROLL_TO_TOP_ON_CHAPTER_CHANGE_PREF, SCROLL_TO_TOP_ON_CHAPTER_CHANGE_DEFAULT);
+    }
+    
     public static int getPreferedTheme(Context context){
     	SharedPreferences settings = context.getSharedPreferences(PREFS_NAME, 0);
         String preference = settings.getString(THEME_PREF, DEFAULT_THEME);
@@ -226,7 +239,10 @@ public class SetPreferencesActivity extends Activity {
     	boolean useScreen = getBoolean(R.id.screenOrientationCheckbox);
     	editor.putBoolean(SCREEN_ORIENTATION_PREF, useScreen);
 
-    	editor.commit();
+        boolean scrollToTop = getBoolean(R.id.scrollToTop);
+        editor.putBoolean(SCROLL_TO_TOP_ON_CHAPTER_CHANGE_PREF, scrollToTop);
+
+        editor.commit();
     	return true;
     }
     

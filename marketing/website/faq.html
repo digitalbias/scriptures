@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta name="description" content="A scripture application for the Android platform" />
+	<meta name="keywords" content="android,scriptures,bible" />
+	<meta name="author" content="David Mitchell" />
+	<link rel="stylesheet" type="text/css" href="andreas08.css" title="andreas08" media="screen,projection" />
+	<title>Scriptures</title>
+</head>
+
+<body>
+<div id="container" >
+	<div id="header">
+		<h1>Scriptures</h1>
+		<h2>an android application</h2>
+	</div>
+
+	<div id="navigation">
+		<ul>
+			<li><a href="index.html">Home</a></li>
+			<li><a href="gallery.html">Gallery</a></li>
+			<li class="selected"><a href="#">FAQ</a></li>
+			<li><a href="support.html">Support</a></li>
+			<li><a href="downloads.html">Downloads</a></li>
+			<li><a href="tool.html">"The Tool"</a></li>
+		</ul>
+	</div>
+
+	<div id="content">
+		<h2>F.A.Q.</h2>
+		<p>Your common questions with their answers.</p>
+		
+		<p><strong>Question</strong>: I have just downloaded the KJV bible [or LDS Scriptures] but it won't open the database. Could you help me get it working? Thanks.<br/>
+			<strong>or</strong> </br/>
+			The idea is good but it repeatedly failed during download.<br/>
+			<strong>or</strong> </br/>
+			It does not download the database all the way. It says it is complete around 30% then when you go to choose the database it says it is invalid.<br/>
+		</p>
+		<p><strong>Answer</strong>: In most cases these problems are related to the amount of time it takes to download the initial scripture database. 
+			While some effort has been made to decrease the size of the files, both the KJV and the LDS versions are still large files (2.5 Mb and 3.6 Mb) 
+			to download to a phone. With each successive release of the application an improvement has been made to the download process, still more can be done
+			on this front. But where does that leave you now?</p>
+			
+		<p>There are a couple solutions.</p>
+		<p>First: Instead of letting the screen go dark while we wait for the download to complete, you can occasionally touch the screen and wait for the database to complete the download process. While it does take time, rest assured that if you just let it go, it will download it.</p>
+		<p>Second: This solution is related to the first: Get on a wifi network or connect to a 3G network and then start the download. It will go faster and will have less chance of the screen going dark while you wait.</p>
+		<p>Third: Don't use the phone to download the scripture database. You can download the database you want from the downloads section on this website.</p>
+		<p>Some technical details: When the download screen in the Scripture application is first opened, it reads an xml file [<a href="http://scriptures.digitalbias.com/compressed_scripture_list.xml">this xml file</a>] for the location of the database and the name it should display. When the user selects the database in the list, it then opens a connection to database location and downloads the database to the phone. It then takes the zip file and extracts the actual database file from the zip and places it on the sd card in the scriptures directory. So, while the progress bar may show that the download has completed, it will take some time for the database to be extracted to the sd card.</p>
+		<p>There are a couple reasons for this solution. 
+			<ol>
+				<li>The XML file can be updated without having to distribute another version of the application.</li>
+				<li>The scripture databases themselves can be distributed in different locations on the web without putting too much burden on one single server.</li>
+				<li>Trusted sources could be added to the XML file and their content could be included in the download listing.</li>
+				<li>The compressed files reduce the size of the download and hopefully decrease the time it takes to download.</li>
+			</ol>
+		</p>
+		<p><strong>Question</strong>: I'd love to see the NIV added to the downloads if possible.</p>
+		<p><strong>Answer</strong>: I would too. There are a great number of translations of the bible out there, some of which are still under copyright. One of these is the NIV (New International Version). When Scriptures was first concieved and created the goal was to provide an easy way for people to use whatever translation of scriptures they preferred. In the case of the NIV, Zondervan, the company that holds the copyright for the translation, charges and up front cost of $7,000.00 and an additional $7.50 for every electronic version of their bible that is distributed. Based on these costs, there will not be a NIV version provided any time soon.</p>
+		<p><strong>Question</strong>: I'd love to see the [insert favorite translation or church manual here] included as a download.</p>
+		<p><strong>Answer</strong>: There are a number of translations and manuals that I would like to see included in the downloads as well. The biggest need with the application, besides coding the application itself, is "<a href="tool.html">The Tool</a>". "The Tool" has always been one of the parts of this effort. From the very get go, I wanted the application to be something that people could use for their scripture needs, independent of what I've done with it. <a href="http://www.yanceyware.com/">YanCEyWare</a> is a great application for Windows Mobile devices, and while I don't expect this particullar application to do the same things it does, creating a tool so people can import their own content into either new or existing databases is still a part of this project. If there is a place where help could be used, it's with answering common questions and with developing this tool.</p>
+		
+	</div>
+
+	<div id="footer">
+		<p>&copy; 2009 David Mitchell | Original design by <a href="http://andreasviklund.com/">Andreas Viklund</a></p>
+	</div>
+
+	</div>
+</body>
+</html>

@@ -4,10 +4,16 @@ Once the 0.3.0 version is complete, then the following is the feature/release pl
 
 * 0.4.0: Search
 * 0.5.0: Highlighting, Notes
-* 0.6.0: Update checker feature (is that even English?) (may or may not be included)
+* 0.6.0: Launch a background download feature (separate program), better library (maybe)
+* 0.7.0: Update checker feature (is that even English?) (may or may not be included)
 * 1.0 Touch up, a license screen, an about screen
 
 Once the 1.0 version is out, then the serious work on the import utility will begin. The goal is to allow people to create their own content and read it on their own devices using the Scripture program. If they so desire, it could be submitted and included in the listing for general download via the Scripture program itself.
+
+v 0.4.0 beta 1
+
+* Added scroll to top preference. 
+* Added preferences into a scroll layout.
 
 
 v 0.3.0 Release
