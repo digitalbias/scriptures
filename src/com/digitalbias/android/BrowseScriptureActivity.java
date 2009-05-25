@@ -120,7 +120,8 @@ public class BrowseScriptureActivity extends ListActivity {
     }
     
     protected void applyPreferences() throws SQLiteException {
-        setTheme(SetPreferencesActivity.getPreferedTheme(this));
+        //setTheme(SetPreferencesActivity.getPreferedTheme(this));
+        setTheme(android.R.style.Theme_Light);
     }
     
     private void browseScriptures(){

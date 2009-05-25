@@ -1,5 +1,7 @@
 Stuff to still to fix from this version before releasing on the market:
 
+With cupcake, there is now a problem with the themes. This should be fixed right away.
+
 Once the 0.3.0 version is complete, then the following is the feature/release plan:
 
 * 0.4.0: Search

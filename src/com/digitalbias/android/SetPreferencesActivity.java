@@ -159,9 +159,9 @@ public class SetPreferencesActivity extends Activity {
     }
     
     protected static int getThemePreference(String themeValue){
-    	int result = android.R.style.Theme_Light_NoTitleBar;
+    	int result = android.R.style.Theme_Light;
     	if(themeValue.indexOf("Dark") >= 0){
-    		result = android.R.style.Theme_Black_NoTitleBar;
+    		result = android.R.style.Theme_Black;
     	}
     	return result;
     }

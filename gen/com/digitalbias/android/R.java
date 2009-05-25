@@ -32,51 +32,51 @@ public final class R {
         public static final int search=0x7f020008;
     }
     public static final class id {
-        public static final int add_bookmark=0x7f08002c;
-        public static final int back_book=0x7f080020;
-        public static final int back_home=0x7f080007;
-        public static final int back_volume=0x7f080008;
-        public static final int book_subtitle=0x7f08000a;
-        public static final int book_title=0x7f080009;
-        public static final int bookmark_layout=0x7f08000c;
-        public static final int bookmark_text=0x7f080001;
-        public static final int cancelButton=0x7f08001e;
-        public static final int cancel_button=0x7f080006;
-        public static final int chapter_layout=0x7f08001f;
-        public static final int chapter_title=0x7f08000d;
-        public static final int chooseFileButton=0x7f080016;
-        public static final int databaseEntry=0x7f080015;
-        public static final int databaseText=0x7f080014;
-        public static final int delete_bookmark=0x7f080026;
-        public static final int done_button=0x7f08000f;
-        public static final int download_database=0x7f080028;
-        public static final int edit_bookmark=0x7f080024;
-        public static final int fontSizeSpinner=0x7f08001a;
-        public static final int fontSizeText=0x7f080019;
-        public static final int goto_bookmark=0x7f080023;
-        public static final int location_text=0x7f080002;
-        public static final int manage_bookmarks=0x7f080029;
-        public static final int move_bookmark=0x7f080025;
-        public static final int okButton=0x7f08001d;
-        public static final int ok_button=0x7f080005;
-        public static final int open_next=0x7f08002b;
-        public static final int open_preferences=0x7f080027;
-        public static final int open_previous=0x7f08002a;
-        public static final int progress=0x7f080011;
-        public static final int refresh_button=0x7f080010;
-        public static final int screenOrientationCheckbox=0x7f08001b;
-        public static final int scripture_layout=0x7f080000;
-        public static final int scrollToTop=0x7f08001c;
-        public static final int scroll_view=0x7f080013;
-        public static final int text1=0x7f080012;
-        public static final int themeSpinner=0x7f080018;
-        public static final int themeText=0x7f080017;
-        public static final int title=0x7f08000b;
-        public static final int title_edit=0x7f080004;
-        public static final int title_text=0x7f080003;
-        public static final int toolbar=0x7f08000e;
-        public static final int verses=0x7f080021;
-        public static final int volume_title=0x7f080022;
+        public static final int add_bookmark=0x7f09002c;
+        public static final int back_book=0x7f090020;
+        public static final int back_home=0x7f090007;
+        public static final int back_volume=0x7f090008;
+        public static final int book_subtitle=0x7f09000a;
+        public static final int book_title=0x7f090009;
+        public static final int bookmark_layout=0x7f09000c;
+        public static final int bookmark_text=0x7f090001;
+        public static final int cancelButton=0x7f09001e;
+        public static final int cancel_button=0x7f090006;
+        public static final int chapter_layout=0x7f09001f;
+        public static final int chapter_title=0x7f09000d;
+        public static final int chooseFileButton=0x7f090016;
+        public static final int databaseEntry=0x7f090015;
+        public static final int databaseText=0x7f090014;
+        public static final int delete_bookmark=0x7f090026;
+        public static final int done_button=0x7f09000f;
+        public static final int download_database=0x7f090028;
+        public static final int edit_bookmark=0x7f090024;
+        public static final int fontSizeSpinner=0x7f09001a;
+        public static final int fontSizeText=0x7f090019;
+        public static final int goto_bookmark=0x7f090023;
+        public static final int location_text=0x7f090002;
+        public static final int manage_bookmarks=0x7f090029;
+        public static final int move_bookmark=0x7f090025;
+        public static final int okButton=0x7f09001d;
+        public static final int ok_button=0x7f090005;
+        public static final int open_next=0x7f09002b;
+        public static final int open_preferences=0x7f090027;
+        public static final int open_previous=0x7f09002a;
+        public static final int progress=0x7f090011;
+        public static final int refresh_button=0x7f090010;
+        public static final int screenOrientationCheckbox=0x7f09001b;
+        public static final int scripture_layout=0x7f090000;
+        public static final int scrollToTop=0x7f09001c;
+        public static final int scroll_view=0x7f090013;
+        public static final int text1=0x7f090012;
+        public static final int themeSpinner=0x7f090018;
+        public static final int themeText=0x7f090017;
+        public static final int title=0x7f09000b;
+        public static final int title_edit=0x7f090004;
+        public static final int title_text=0x7f090003;
+        public static final int toolbar=0x7f09000e;
+        public static final int verses=0x7f090021;
+        public static final int volume_title=0x7f090022;
     }
     public static final class layout {
         public static final int add_bookmark=0x7f030000;
@@ -94,9 +94,9 @@ public final class R {
         public static final int volume_list=0x7f03000c;
     }
     public static final class menu {
-        public static final int bookmark_context_menu=0x7f070000;
-        public static final int browse_menu=0x7f070001;
-        public static final int chapter_menu=0x7f070002;
+        public static final int bookmark_context_menu=0x7f080000;
+        public static final int browse_menu=0x7f080001;
+        public static final int chapter_menu=0x7f080002;
     }
     public static final class string {
         public static final int add_bookmark=0x7f06000b;
@@ -126,5 +126,9 @@ public final class R {
         public static final int preferences_title=0x7f060007;
         public static final int previous_title=0x7f060009;
         public static final int to_top=0x7f060006;
+    }
+    public static final class style {
+        public static final int customBlackTheme=0x7f070001;
+        public static final int customLightTheme=0x7f070000;
     }
 }

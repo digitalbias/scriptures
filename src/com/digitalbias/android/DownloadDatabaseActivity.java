@@ -42,7 +42,6 @@ public class DownloadDatabaseActivity extends ListActivity {
 	
 	private List<DatabaseLocation> mDatabaseList;
 	private static final String DATABASE_LIST_URI = "http://scriptures.digitalbias.com/compressed_scripture_list.xml";
-//	private static final String DATABASE_LIST_URI = "http://scriptures.digitalbias.com/scripture_list.xml";
     private static final int IO_BUFFER_SIZE = 4 * 1024;
     private ProgressBar mProgressBar;
     private TextView mTextView;
