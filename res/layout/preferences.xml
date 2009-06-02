@@ -29,7 +29,6 @@
 			android:text="Choose file..."
 	    	/>
 	    	
-<!-- 
 		<TextView android:id="@+id/themeText" 
 	        android:layout_width="fill_parent" 
 	        android:layout_height="wrap_content" 
@@ -49,14 +48,14 @@
 	        android:text="Verse Font Size"
 	        android:layout_below="@id/themeSpinner" 
 	        />
--->
+<!-- 
 		<TextView android:id="@+id/fontSizeText" 
 	        android:layout_width="fill_parent" 
 	        android:layout_height="wrap_content" 
 	        android:text="Verse Font Size"
 	        android:layout_below="@id/chooseFileButton" 
 	        />
-	        
+-->	        
 		<Spinner android:id="@+id/fontSizeSpinner" 
 				android:layout_below="@id/fontSizeText" 
 				android:layout_width="fill_parent" 

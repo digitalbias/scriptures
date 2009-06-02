@@ -1,3 +1,55 @@
+Themes:
+
+* Static -->
+  * in XML 
+	 * application level
+	  	[?] custom theme
+	  		[y] light
+	  		[n] dark
+	  	[y] built-in theme
+	  		[y] light
+	  		[y] dark
+	 * context level
+	  	[?] custom theme
+	  		[y] light
+	  		[n] dark
+	  	[y] built-in theme
+	  		[y] light
+	  		[y] dark
+  * in Code
+	 * application level
+	  	[n] custom theme
+	  		[n] light
+	  		[n] dark
+	  	[n] built-in theme
+	  		[n] light
+	  		[n] dark
+	 * context level
+	  	[] custom theme
+	  		[] light
+	  		[] dark
+	  	[x] built-in theme
+	  		[x] light
+	  		[x] dark
+
+* Dynamic -->
+ * application level
+  	[n] custom theme
+  		[n] light
+  		[n] dark
+  	[n] built-in theme
+  		[n] light
+  		[n] dark
+ * context level
+  	[?] custom theme
+  		[x] light
+  		[n] dark
+  	[x] built-in theme
+  		[x] light
+  		[x] dark
+ * 
+
+
 Stuff to still to fix from this version before releasing on the market:
 
 With cupcake, there is now a problem with the themes. This should be fixed right away.

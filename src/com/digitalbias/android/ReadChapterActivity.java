@@ -55,8 +55,8 @@ public class ReadChapterActivity extends Activity implements OnTouchListener, On
 	/** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         setTheme(SetPreferencesActivity.getPreferedTheme(this));
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.read_chapter);
         mContext = this;
         mScrollView = (ScrollView) findViewById(R.id.scroll_view);

@@ -207,8 +207,8 @@ public class DownloadDatabaseActivity extends ListActivity {
     }
 
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         setTheme(SetPreferencesActivity.getPreferedTheme(this));
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.database_dialog);
         mTextView = (TextView) findViewById(R.id.title);
         mDoneButton = (Button) findViewById(R.id.done_button);

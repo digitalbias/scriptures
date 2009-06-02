@@ -36,9 +36,9 @@ public class ManageBookmarksActivity extends ListActivity {
 	/** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         mContext = this;
         setTheme(SetPreferencesActivity.getPreferedTheme(this));
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.bookmark_list);
 
         registerForContextMenu(getListView());

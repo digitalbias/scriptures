@@ -49,9 +49,9 @@ public class BrowseScriptureActivity extends ListActivity {
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         mBrowseScriptureActivity = this;
         applyPreferences();
+        super.onCreate(savedInstanceState);
         initializeDatabase();
         if(mAdapter.canMakeValidConnection()){
 	    	browseScriptures();
@@ -125,8 +125,9 @@ public class BrowseScriptureActivity extends ListActivity {
     }
     
     protected void applyPreferences() throws SQLiteException {
-    	Application app = mBrowseScriptureActivity.getApplication();
-    	app.setTheme(SetPreferencesActivity.getPreferedTheme(this));
+    	mBrowseScriptureActivity.setTheme(SetPreferencesActivity.getPreferedTheme(this));
+//    	mBrowseScriptureActivity.setTheme(android.R.style.Theme_Light);
+//    	mBrowseScriptureActivity.setTheme(android.R.style.Theme);
     }
     
     private void browseScriptures(){

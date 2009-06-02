@@ -64,11 +64,11 @@ public class SetPreferencesActivity extends Activity {
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
+    	SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        setTheme(getPreferedTheme(this));
+        
         super.onCreate(savedInstanceState);
 
-    	SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-    	
-        setTheme(getPreferedTheme(this));
         setContentView(R.layout.preferences);
     	
         String preference = settings.getString(DATABASE_PREF, getDatabaseDirectory() + DEFAULT_DATABASE_NAME);
@@ -83,12 +83,12 @@ public class SetPreferencesActivity extends Activity {
         spinner.setAdapter(adapter);
         setSpinnerFontSize(spinner, fontSize);
 
-//        preference = settings.getString(THEME_PREF, DEFAULT_THEME);
-//        spinner = (Spinner)findViewById(R.id.themeSpinner);
-//        adapter = ArrayAdapter.createFromResource(this, R.array.themes, android.R.layout.simple_spinner_item);
-//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//        spinner.setAdapter(adapter);
-//        setSpinnerTheme(spinner, preference);
+        preference = settings.getString(THEME_PREF, DEFAULT_THEME);
+        spinner = (Spinner)findViewById(R.id.themeSpinner);
+        adapter = ArrayAdapter.createFromResource(this, R.array.themes, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        setSpinnerTheme(spinner, preference);
         
         boolean useScreen = settings.getBoolean(SCREEN_ORIENTATION_PREF, DEFAULT_SCREEN_ORIENTATION);
         CheckBox checkbox = (CheckBox)findViewById(R.id.screenOrientationCheckbox);
@@ -160,10 +160,11 @@ public class SetPreferencesActivity extends Activity {
     }
     
     protected static int getThemePreference(String themeValue){
-    	int result = R.style.customLightTheme;
-//    	if(themeValue.indexOf("Dark") >= 0){
-//    		result = R.style.customBlackTheme;
-//    	}
+    	int result = android.R.style.Theme_Light;
+//    	int result = android.R.style.Theme;
+    	if(themeValue.indexOf("Dark") >= 0){
+    		result = android.R.style.Theme;
+    	}
     	return result;
     }
     
@@ -231,10 +232,10 @@ public class SetPreferencesActivity extends Activity {
     	if(!file.exists()) return false;
 		editor.putString(DATABASE_PREF, preference);
     	
-//    	preference = getSelectedTheme(R.id.themeSpinner);
-//    	String oldPreference = settings.getString(THEME_PREF, preference);
-//    	themeChanged = !preference.equalsIgnoreCase(oldPreference);
-//    	editor.putString(THEME_PREF, preference);
+    	preference = getSelectedTheme(R.id.themeSpinner);
+    	String oldPreference = settings.getString(THEME_PREF, preference);
+    	themeChanged = !preference.equalsIgnoreCase(oldPreference);
+    	editor.putString(THEME_PREF, preference);
 
     	int fontSize = getSelectedFontSize(R.id.fontSizeSpinner);
     	editor.putInt(VERSE_SIZE_FONT_PREF, fontSize);
