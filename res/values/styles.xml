@@ -2,8 +2,12 @@
 <resources>
   <style name="customLightTheme" parent="@android:style/Theme.Light">        
     <item name="android:windowNoTitle">false</item>
+    <item name="android:textColor">#FF000000</item>
+    <item name="android:background">#00FFFFFF</item>
   </style>
   <style name="customBlackTheme" parent="@android:style/Theme.Black">        
     <item name="android:windowNoTitle">false</item>
+    <item name="android:textColor">#00FFFFFF</item>
+    <item name="android:background">#FF000000</item>
   </style>
 </resources>

@@ -15,9 +15,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.GestureDetector.OnGestureListener;
-import android.view.OrientationListener; 
 import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.EditText;
@@ -45,9 +45,8 @@ public class ReadChapterActivity extends Activity implements OnTouchListener, On
 	private Button mHomeButton;
 	private ScrollView mScrollView; 
 	
-	private GestureDetector mGestureDetector; 
-//    private SensorManager mSensorManager;
-    private OrientationListener mOrientationListener;
+	private GestureDetector mGestureDetector;
+	private OrientationEventListener mOrientationEventListener;
 
 	protected Context mContext;
 	protected String mCalledFrom;
@@ -60,8 +59,13 @@ public class ReadChapterActivity extends Activity implements OnTouchListener, On
         setTheme(SetPreferencesActivity.getPreferedTheme(this));
         setContentView(R.layout.read_chapter);
         mContext = this;
-
         mScrollView = (ScrollView) findViewById(R.id.scroll_view);
+        mOrientationEventListener = new OrientationEventListener(mContext)  {
+			@Override
+			public void onOrientationChanged(int orientation) {
+				onOrientationChange(orientation);
+			}
+        };
 
         setupGestures();
         
@@ -139,7 +143,7 @@ public class ReadChapterActivity extends Activity implements OnTouchListener, On
     @Override
     protected void onStop() {
 		if(SetPreferencesActivity.getOrientationPreference(this)){
-			mOrientationListener.disable();
+			mOrientationEventListener.disable();
 		}
         super.onStop();
     }
@@ -159,22 +163,9 @@ public class ReadChapterActivity extends Activity implements OnTouchListener, On
 				}
 	    	}, 200);
 		}
-		if(mOrientationListener == null ) {
-			mOrientationListener = new OrientationListener(this){
-				@Override
-				public void onOrientationChanged(int orientation) {
-					if(orientation >= 225 && orientation <= 300){
-						setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-						//Log.d("Orientation", "landscape");
-					} else {
-						setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-						//Log.d("Orientation", "portrait");
-					}
-				}
-			};
-		}
+		
 		if(SetPreferencesActivity.getOrientationPreference(this)){
-			mOrientationListener.enable();
+			mOrientationEventListener.enable();
 		}
     }
     
@@ -348,6 +339,7 @@ public class ReadChapterActivity extends Activity implements OnTouchListener, On
     private void populateList(){
     	log("populate");
     	setupUiElements();
+    	log("done populating");
     	
         if(mAdapter == null){
         	mAdapter = new ScriptureDbAdapter(this);
@@ -357,6 +349,7 @@ public class ReadChapterActivity extends Activity implements OnTouchListener, On
     }
     
     private void fetchAllVerses(){
+    	log("getting verses");
     	mCursor = mAdapter.fetchBookVerses(mBookId.toString(), mChapterId.toString());
 
     	StringBuilder builder = new StringBuilder();
@@ -379,6 +372,7 @@ public class ReadChapterActivity extends Activity implements OnTouchListener, On
     	TextView verses = (TextView)findViewById(R.id.verses);
     	verses.setTextKeepState(text, TextView.BufferType.SPANNABLE);
     	verses.setTextSize(SetPreferencesActivity.getPreferedFontSize(this));
+    	log("done getting verses");
     }
 
     @Override
@@ -432,4 +426,11 @@ public class ReadChapterActivity extends Activity implements OnTouchListener, On
 		}
 	}
 
+	private void onOrientationChange(int orientation) {
+		if(orientation >= 225 && orientation <= 300){
+			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+		} else {
+			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+		}
+	}
 }

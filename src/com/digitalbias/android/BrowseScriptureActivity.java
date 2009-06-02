@@ -1,6 +1,7 @@
 package com.digitalbias.android;
 
 import android.app.AlertDialog;
+import android.app.Application;
 import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -23,6 +24,8 @@ public class BrowseScriptureActivity extends ListActivity {
 	public static final String TAG = "Scriptures";
 
 	public static final String BROWSE_MODE = "BrowseMode";
+	
+	public static final int RESULT_RESTART = 666;
 
 	public static final int BROWSE_SCRIPTURES_MODE = 0; 
 	public static final int BROWSE_VOLUME_MODE = 1; 
@@ -35,6 +38,7 @@ public class BrowseScriptureActivity extends ListActivity {
 
 	public static boolean DEBUG = true;
 	
+	private BrowseScriptureActivity mBrowseScriptureActivity;
 	private Cursor mCursor;
 	private ScriptureDbAdapter mAdapter;
 	private int mBrowseMode; 
@@ -46,6 +50,7 @@ public class BrowseScriptureActivity extends ListActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mBrowseScriptureActivity = this;
         applyPreferences();
         initializeDatabase();
         if(mAdapter.canMakeValidConnection()){
@@ -120,8 +125,8 @@ public class BrowseScriptureActivity extends ListActivity {
     }
     
     protected void applyPreferences() throws SQLiteException {
-        //setTheme(SetPreferencesActivity.getPreferedTheme(this));
-        setTheme(android.R.style.Theme_Light);
+    	Application app = mBrowseScriptureActivity.getApplication();
+    	app.setTheme(SetPreferencesActivity.getPreferedTheme(this));
     }
     
     private void browseScriptures(){
@@ -282,6 +287,18 @@ public class BrowseScriptureActivity extends ListActivity {
                     beginBrowsing(intent);
         			break;
         	}
+        } else if (resultCode == RESULT_RESTART){
+        	AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    		builder.setMessage("Application must be restarted to apply new theme choice.");
+    		builder.setTitle("Restart");
+    		builder.setPositiveButton("Ok", new DialogInterface.OnClickListener(){
+    			public void onClick(DialogInterface dialog, int which){
+    				mBrowseScriptureActivity.finish();
+    			}
+    		});
+    		builder.setCancelable(true);
+    		AlertDialog dialog = builder.create();
+    		dialog.show();
         }
     }
     

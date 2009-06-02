@@ -48,6 +48,8 @@ public class SetPreferencesActivity extends Activity {
     protected static final String DEFAULT_DATABASE_DIRECTORY = "/scriptures/";
     protected static final String DATABASE_PREF = "database_location";
 
+    protected boolean themeChanged = false;
+    
     public static String getDatabaseDirectory(){
     	return android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + DEFAULT_DATABASE_DIRECTORY;
     }
@@ -73,21 +75,20 @@ public class SetPreferencesActivity extends Activity {
         EditText text = (EditText)findViewById(R.id.databaseEntry);
         text.setText(preference);
         
-        preference = settings.getString(THEME_PREF, DEFAULT_THEME);
-        Spinner spinner = (Spinner)findViewById(R.id.themeSpinner);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-                this, R.array.themes, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-        setSpinnerTheme(spinner, preference);
-        
         int fontSize = settings.getInt(VERSE_SIZE_FONT_PREF, SMALL_FONT_SIZE);
-        spinner = (Spinner)findViewById(R.id.fontSizeSpinner);
-        adapter = ArrayAdapter.createFromResource(
+        Spinner spinner = (Spinner)findViewById(R.id.fontSizeSpinner);
+	    ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
                 this, R.array.font_size, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         setSpinnerFontSize(spinner, fontSize);
+
+//        preference = settings.getString(THEME_PREF, DEFAULT_THEME);
+//        spinner = (Spinner)findViewById(R.id.themeSpinner);
+//        adapter = ArrayAdapter.createFromResource(this, R.array.themes, android.R.layout.simple_spinner_item);
+//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        spinner.setAdapter(adapter);
+//        setSpinnerTheme(spinner, preference);
         
         boolean useScreen = settings.getBoolean(SCREEN_ORIENTATION_PREF, DEFAULT_SCREEN_ORIENTATION);
         CheckBox checkbox = (CheckBox)findViewById(R.id.screenOrientationCheckbox);
@@ -117,7 +118,7 @@ public class SetPreferencesActivity extends Activity {
                 openFileDialog(v);
         	}
         });
-        
+        themeChanged = false;
     }
     
     protected void openFileDialog(View v){
@@ -159,10 +160,10 @@ public class SetPreferencesActivity extends Activity {
     }
     
     protected static int getThemePreference(String themeValue){
-    	int result = android.R.style.Theme_Light;
-    	if(themeValue.indexOf("Dark") >= 0){
-    		result = android.R.style.Theme_Black;
-    	}
+    	int result = R.style.customLightTheme;
+//    	if(themeValue.indexOf("Dark") >= 0){
+//    		result = R.style.customBlackTheme;
+//    	}
     	return result;
     }
     
@@ -230,8 +231,10 @@ public class SetPreferencesActivity extends Activity {
     	if(!file.exists()) return false;
 		editor.putString(DATABASE_PREF, preference);
     	
-    	preference = getSelectedTheme(R.id.themeSpinner);
-    	editor.putString(THEME_PREF, preference);
+//    	preference = getSelectedTheme(R.id.themeSpinner);
+//    	String oldPreference = settings.getString(THEME_PREF, preference);
+//    	themeChanged = !preference.equalsIgnoreCase(oldPreference);
+//    	editor.putString(THEME_PREF, preference);
 
     	int fontSize = getSelectedFontSize(R.id.fontSizeSpinner);
     	editor.putInt(VERSE_SIZE_FONT_PREF, fontSize);
@@ -250,6 +253,10 @@ public class SetPreferencesActivity extends Activity {
         Bundle bundle = new Bundle();
         Intent intent = new Intent();
         intent.putExtras(bundle);
+        if(themeChanged) {
+        	log("theme changed. Restart required for theme to be applied correctly");
+        	resultCode = BrowseScriptureActivity.RESULT_RESTART;
+        }
         log("setting result code to: " + resultCode);
         setResult(resultCode, intent);
         finish();
