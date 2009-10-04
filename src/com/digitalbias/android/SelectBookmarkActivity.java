@@ -51,7 +51,7 @@ public class SelectBookmarkActivity extends ListActivity {
     private void populateList(Bundle extras){
 		setupUiElements(extras);
 	
-		mAdapter = new ScriptureDbAdapter(this);
+		mAdapter = new ScriptureDbAdapter(this.getSharedPreferences(SetPreferencesActivity.PREFS_NAME, 0));
 		mAdapter.open();
 		fetchBookmarks();
     }

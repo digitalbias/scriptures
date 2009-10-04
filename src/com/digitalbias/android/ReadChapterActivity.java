@@ -1,14 +1,19 @@
 package com.digitalbias.android;
 
+import org.xml.sax.XMLReader;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.Html;
 import android.text.Spanned;
+import android.text.style.BackgroundColorSpan;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Menu;
@@ -32,12 +37,15 @@ public class ReadChapterActivity extends Activity implements OnTouchListener, On
 	private static final int ACTIVITY_SELECT_BOOKMARK = 2;
 	
 	public static final String CALLING_ACTIVITY = "callingActivity";
+	
+	private static final int highlightColor = Color.parseColor("#ffff88"); 
 
 	private ScriptureDbAdapter mAdapter;
 	private Cursor mCursor;
 	private Long mChapterId;
 	private Long mVolumeId;
 	private Long mBookId;
+	private Long mSelectedVerseId;
 
     private TextView mTitleText;
 	private Button mBookButton;
@@ -57,16 +65,21 @@ public class ReadChapterActivity extends Activity implements OnTouchListener, On
     public void onCreate(Bundle savedInstanceState) {
         setTheme(SetPreferencesActivity.getPreferedTheme(this));
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.read_chapter);
+    	log("creating read activity");
+
+    	setContentView(R.layout.read_chapter);
+    	log("content view set");
         mContext = this;
         mScrollView = (ScrollView) findViewById(R.id.scroll_view);
-        mOrientationEventListener = new OrientationEventListener(mContext)  {
-			@Override
-			public void onOrientationChanged(int orientation) {
-				onOrientationChange(orientation);
-			}
-        };
+    	log("found scroll view");
+//        mOrientationEventListener = new OrientationEventListener(mContext)  {
+//			@Override
+//			public void onOrientationChanged(int orientation) {
+//				onOrientationChange(orientation);
+//			}
+//        };
 
+    	log("setting up gestures");
         setupGestures();
         
         mTitleText = (TextView) findViewById(R.id.chapter_title);
@@ -78,7 +91,58 @@ public class ReadChapterActivity extends Activity implements OnTouchListener, On
         mVolumeId = null;
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
-        setMembers(extras);
+        if(extras != null){
+            setMembers(extras);
+        }
+    	log("activity created");
+    }
+    
+    private Bundle extrasFromSearchData(Intent intent){
+    	Bundle result = new Bundle();
+        String verseId = intent.getDataString();
+        if(verseId == null){
+        	Bundle extras = intent.getExtras();
+        	verseId = Long.toString(extras.getLong(ScriptureDbAdapter.VERSE_ID));
+        }
+        log(verseId);        
+    	
+        if(mAdapter == null){
+        	mAdapter = new ScriptureDbAdapter(this.getSharedPreferences(SetPreferencesActivity.PREFS_NAME, 0));
+			mAdapter.open();
+        }
+
+        Cursor verse = mAdapter.fetchSingleVerse(verseId);
+		Long verseNumber = verse.getLong(verse.getColumnIndexOrThrow(ScriptureDbAdapter.VERSE_NUMBER));
+		Long bookId = verse.getLong(verse.getColumnIndex(ScriptureDbAdapter.BOOK_ID));
+		Long volumeId = verse.getLong(verse.getColumnIndex(ScriptureDbAdapter.VOLUME_ID));
+		String verseText = verse.getString(verse.getColumnIndexOrThrow(ScriptureDbAdapter.VERSE_TEXT));
+		Long chapterId = verse.getLong(verse.getColumnIndex(ScriptureDbAdapter.CHAPTER_ID));
+		
+        Cursor c = mAdapter.fetchSingleVolume(volumeId.toString());
+        String volumeTitle = c.getString(c.getColumnIndex(ScriptureDbAdapter.VOLUME_TITLE_LONG));
+		
+		
+		result.putLong(ScriptureDbAdapter.VERSE_ID, Long.parseLong(verseId));
+		result.putLong(ScriptureDbAdapter.VERSE_NUMBER, verseNumber);
+		result.putString(ScriptureDbAdapter.VERSE_TEXT, verseText);
+		result.putInt(BrowseScriptureActivity.BROWSE_MODE, BrowseScriptureActivity.OPEN_VERSE_MODE);
+
+        c = mAdapter.fetchSingleChapter(bookId.toString(), chapterId.toString());
+        String chapterTitle = c.getString(c.getColumnIndexOrThrow(ScriptureDbAdapter.CHAPTER_TITLE));
+
+    	c = mAdapter.fetchSingleBook(bookId.toString());
+    	String shortTitle = c.getString(c.getColumnIndex(ScriptureDbAdapter.BOOK_TITLE_SHORT));
+    	String bookTitle = c.getString( c.getColumnIndexOrThrow(ScriptureDbAdapter.BOOK_TITLE));    	
+        
+        result.putLong(ScriptureDbAdapter.TABLE_ID, chapterId);
+        result.putLong(ScriptureDbAdapter.BOOK_ID, bookId);
+        result.putLong(ScriptureDbAdapter.VOLUME_ID, volumeId);
+        result.putString(ScriptureDbAdapter.VOLUME_TITLE, volumeTitle);
+        result.putString(ScriptureDbAdapter.CHAPTER_TITLE, chapterTitle);
+        result.putString(ScriptureDbAdapter.BOOK_TITLE, bookTitle);
+        result.putString(ScriptureDbAdapter.BOOK_TITLE_SHORT, shortTitle);
+		
+    	return result;
     }
 
     protected void setMembers(Bundle bundle){
@@ -98,13 +162,32 @@ public class ReadChapterActivity extends Activity implements OnTouchListener, On
     		mScrollTo = 0;
     	}
     	
+    	log("getting browse mode");
+    	int browseMode = bundle.getInt(BrowseScriptureActivity.BROWSE_MODE, BrowseScriptureActivity.BROWSE_BOOK_MODE); 
+    	if(browseMode == BrowseScriptureActivity.OPEN_VERSE_MODE){
+    		mSelectedVerseId = bundle.getLong(ScriptureDbAdapter.VERSE_ID);
+        	log("mSelectedVerse = " + mSelectedVerseId.toString());
+//    	} else {
+//    		mSelectedVerseNum = null;
+//        	log("mSelectedVerse = null");
+    	}
+    	
+
     	mTitleText.setText(title);
     	mBookButton.setText(bookTitle);
     	mVolumeButton.setText(volumeTitle);
+    	
     }
     
     protected void onPostCreate(Bundle bundle){
     	super.onPostCreate(bundle);
+		Intent intent = getIntent();
+		Bundle extras = intent.getExtras();
+    	if(extras == null) {
+    		extras = extrasFromSearchData(intent);
+        	intent.putExtras(extras);
+        	setMembers(extras);
+    	}
         populateList();
     }
     
@@ -142,9 +225,9 @@ public class ReadChapterActivity extends Activity implements OnTouchListener, On
     
     @Override
     protected void onStop() {
-		if(SetPreferencesActivity.getOrientationPreference(this)){
-			mOrientationEventListener.disable();
-		}
+//		if(SetPreferencesActivity.getOrientationPreference(this)){
+//			mOrientationEventListener.disable();
+//		}
         super.onStop();
     }
 
@@ -164,9 +247,9 @@ public class ReadChapterActivity extends Activity implements OnTouchListener, On
 	    	}, 200);
 		}
 		
-		if(SetPreferencesActivity.getOrientationPreference(this)){
-			mOrientationEventListener.enable();
-		}
+//		if(SetPreferencesActivity.getOrientationPreference(this)){
+//			mOrientationEventListener.enable();
+//		}
     }
     
     @Override
@@ -342,7 +425,7 @@ public class ReadChapterActivity extends Activity implements OnTouchListener, On
     	log("done populating");
     	
         if(mAdapter == null){
-        	mAdapter = new ScriptureDbAdapter(this);
+        	mAdapter = new ScriptureDbAdapter(this.getSharedPreferences(SetPreferencesActivity.PREFS_NAME, 0));
 			mAdapter.open();
         }
 		fetchAllVerses();
@@ -355,20 +438,67 @@ public class ReadChapterActivity extends Activity implements OnTouchListener, On
     	StringBuilder builder = new StringBuilder();
     	
     	while(mCursor.moveToNext()){
+    		String verseNumber = mCursor.getString(mCursor.getColumnIndexOrThrow(ScriptureDbAdapter.VERSE_NUMBER));
+    		String verseId = mCursor.getString(mCursor.getColumnIndexOrThrow(ScriptureDbAdapter.TABLE_ID));
+
+    		boolean selected = false;
+    		if(mSelectedVerseId != null && mSelectedVerseId.equals(Long.parseLong(verseId))) {
+    			selected = true;
+    		}
+    		
     		boolean pilcrow = ((Long)mCursor.getLong(mCursor.getColumnIndexOrThrow(ScriptureDbAdapter.VERSE_PILCROW))).longValue() == 1;
+    		if(selected) { 
+    			builder.append("<colorize>");
+    		}
     		builder.append("<p><span>");
-    		builder.append(mCursor.getString(mCursor.getColumnIndexOrThrow(ScriptureDbAdapter.VERSE_NUMBER)));
+    		builder.append(verseNumber);
     		builder.append("</span> ");
     		
     		if(pilcrow) {
     			builder.append("&#182; ");
     		}
-    		
-    		builder.append(mCursor.getString(mCursor.getColumnIndexOrThrow(ScriptureDbAdapter.VERSE_TEXT)));
+    		String verseText = mCursor.getString(mCursor.getColumnIndexOrThrow(ScriptureDbAdapter.VERSE_TEXT)); 
+    		builder.append(verseText);
     		builder.append("</p>");
+    		if(selected) { 
+    			builder.append("</colorize>");
+    		}
     	}
     	
-    	Spanned text = Html.fromHtml(builder.toString());
+    	Spanned text = Html.fromHtml(builder.toString(), null, new Html.TagHandler() {
+			public void handleTag(boolean opening, String tag, Editable output,
+					XMLReader xmlReader) {
+				if(tag.equalsIgnoreCase("colorize") && !opening){
+					log("---------------------handle tag: " + tag);
+					log("output size: " + output.length());
+					int startPoint = getSpanStartPoint(output, mSelectedVerseId);
+					int highlightSize = getHightlightSpanSize(mSelectedVerseId);
+					int endPoint = startPoint + highlightSize;
+					log("start: " + startPoint);
+					log("size: " + highlightSize);
+					log("end: " + endPoint);
+					output.setSpan(new BackgroundColorSpan(highlightColor), startPoint, endPoint, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+					log("---------------------handle tag end");
+				}
+			}
+			
+		    private int getSpanStartPoint(Editable output, Long verseId) {
+		    	Cursor verse = mAdapter.fetchSingleVerse(verseId.toString());
+				String verseNumber = verse.getString(verse.getColumnIndexOrThrow(ScriptureDbAdapter.VERSE_NUMBER));
+				return output.toString().indexOf(verseNumber+ " ");
+			}
+		    
+			private int getHightlightSpanSize(Long verseId) {
+		    	Cursor verse = mAdapter.fetchSingleVerse(verseId.toString());
+		    	int textSize = verse.getString(verse.getColumnIndexOrThrow(ScriptureDbAdapter.VERSE_TEXT)).length();
+				boolean pilcrow = ((Long)verse.getLong(verse.getColumnIndexOrThrow(ScriptureDbAdapter.VERSE_PILCROW))).longValue() == 1;
+				int verseNumberSize = verse.getString(verse.getColumnIndexOrThrow(ScriptureDbAdapter.VERSE_NUMBER)).length();
+				int result = textSize + verseNumberSize + 1;
+				result = pilcrow ? result + 2 : result;
+				return result;
+		    }
+		    
+		});
     	TextView verses = (TextView)findViewById(R.id.verses);
     	verses.setTextKeepState(text, TextView.BufferType.SPANNABLE);
     	verses.setTextSize(SetPreferencesActivity.getPreferedFontSize(this));

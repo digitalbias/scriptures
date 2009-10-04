@@ -28,4 +28,9 @@
     <string name="download_activity_download_stopped">Download stopped</string>
     <string name="download_activity_retry">Retry</string>
     <string name="download_activity_quit">Quit</string>
+    
+    <!-- Search Strings -->
+	<string name="search_label">Scriptures</string>
+	<string name="settings_description">content of scripture verses</string>
+    <string name="search_results">Search results for </string>
 </resources>

@@ -3,6 +3,7 @@ package com.digitalbias.android;
 import android.app.AlertDialog;
 import android.app.Application;
 import android.app.ListActivity;
+import android.app.SearchManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -30,6 +31,7 @@ public class BrowseScriptureActivity extends ListActivity {
 	public static final int BROWSE_SCRIPTURES_MODE = 0; 
 	public static final int BROWSE_VOLUME_MODE = 1; 
 	public static final int BROWSE_BOOK_MODE = 2; 
+	public static final int OPEN_VERSE_MODE = 3; 
 
 	private static final int ACTIVITY_PREFERENCES = 0;
 	private static final int ACTIVITY_DOWNLOAD = 1;
@@ -59,13 +61,29 @@ public class BrowseScriptureActivity extends ListActivity {
         	getGoodDatabase();
         }
         closeDatabase();
+        processSearchPossibility(getIntent());
+    }
+    
+    private void processSearchPossibility(Intent intent){
+        if(Intent.ACTION_VIEW.equals(intent.getAction())){
+            String verseId = intent.getDataString();
+            log("view verse: " + verseId);
+            Bundle extras = intent.getExtras();
+            if(extras == null) extras = new Bundle();
+            extras.putLong(ScriptureDbAdapter.VOLUME_ID, 0);
+            extras.putLong(ScriptureDbAdapter.BOOK_ID, 0);
+            extras.putLong(ScriptureDbAdapter.VERSE_ID, Long.parseLong(verseId));
+            extras.putInt(BROWSE_MODE, OPEN_VERSE_MODE);
+            intent.putExtras(extras);
+        } 
     }
     
     @Override
     public void onNewIntent(Intent intent){
     	log("New INTENT");
     	Bundle extras = intent.getExtras();
-    	if(extras!= null) {
+    	processSearchPossibility(intent);
+    	if(extras != null) {
 	    	mVolumeId = extras.getLong(ScriptureDbAdapter.VOLUME_ID);
 	    	mBookId = extras.getLong(ScriptureDbAdapter.BOOK_ID);
 	    	mBrowseMode = extras.getInt(BROWSE_MODE);
@@ -82,7 +100,7 @@ public class BrowseScriptureActivity extends ListActivity {
         if(mAdapter != null) {
         	mAdapter.close();
         }
-        mAdapter = new ScriptureDbAdapter(this);
+        mAdapter = new ScriptureDbAdapter(this.getSharedPreferences(SetPreferencesActivity.PREFS_NAME, 0));
 	}
 
     private void closeDatabase() {
@@ -183,6 +201,7 @@ public class BrowseScriptureActivity extends ListActivity {
 		Cursor c = mAdapter.fetchSingleBook(bookId.toString());
         String title = c.getString( c.getColumnIndexOrThrow(ScriptureDbAdapter.BOOK_TITLE));
         String subTitle = c.getString( c.getColumnIndexOrThrow(ScriptureDbAdapter.BOOK_SUBTITLE));
+        mVolumeId = c.getLong(c.getColumnIndexOrThrow(ScriptureDbAdapter.VOLUME_ID));
         c.close();
         c = mAdapter.fetchSingleVolume(mVolumeId.toString());
         String volumeTitle = c.getString(c.getColumnIndex(ScriptureDbAdapter.VOLUME_TITLE_LONG));
@@ -212,24 +231,57 @@ public class BrowseScriptureActivity extends ListActivity {
     	setListAdapter(adapter);
     }
 
-    private void openChapter(int position, Long id){
+	private void openVerse(Long verseId){
+		log("opening verse: " + verseId.toString());
+		
+		Cursor verse = mAdapter.fetchSingleVerse(verseId.toString());
+		Long verseNumber = verse.getLong(verse.getColumnIndexOrThrow(ScriptureDbAdapter.VERSE_NUMBER));
+		Long bookId = verse.getLong(verse.getColumnIndex(ScriptureDbAdapter.BOOK_ID));
+		String verseText = verse.getString(verse.getColumnIndexOrThrow(ScriptureDbAdapter.VERSE_TEXT));
+		
+		log("opening book (from verse): " + bookId.toString());
+		browseBook(bookId);
+		
+		Long chapterId = verse.getLong(verse.getColumnIndex(ScriptureDbAdapter.CHAPTER_ID));
+		Intent i = getChapterIntent(chapterId);
+		Bundle extras = i.getExtras();
+		
+		extras.putLong(ScriptureDbAdapter.VERSE_ID, verseId);
+		extras.putLong(ScriptureDbAdapter.VERSE_NUMBER, verseNumber);
+		extras.putString(ScriptureDbAdapter.VERSE_TEXT, verseText);
+		extras.putInt(BROWSE_MODE, OPEN_VERSE_MODE);
+		i.putExtras(extras);
+		
+        startActivityForResult(i, ACTIVITY_READ_CHAPTER);
+	}
+    
+	private Intent getChapterIntent(Long chapterId){
         TextView titleText = (TextView) findViewById(R.id.book_title);
         Button volumeButton = (Button) findViewById(R.id.back_volume);
-
-        Cursor c = mCursor;
-        c.moveToPosition(position);
+        
+        Cursor c = mAdapter.fetchSingleChapter(mBookId.toString(), chapterId.toString());
+        String chapterTitle = c.getString(c.getColumnIndexOrThrow(ScriptureDbAdapter.CHAPTER_TITLE));
+        
         Intent i = new Intent(this, ReadChapterActivity.class);
-        i.putExtra(ScriptureDbAdapter.TABLE_ID, id);
+        i.putExtra(ScriptureDbAdapter.TABLE_ID, chapterId);
         i.putExtra(ScriptureDbAdapter.BOOK_TITLE, titleText.getText());
         i.putExtra(ScriptureDbAdapter.BOOK_ID, mBookId);
         i.putExtra(ScriptureDbAdapter.VOLUME_ID, mVolumeId);
         i.putExtra(ScriptureDbAdapter.VOLUME_TITLE, volumeButton.getText());
         i.putExtra(ScriptureDbAdapter.BOOK_TITLE_SHORT, getShortBookTitle(mBookId));
-        i.putExtra(ScriptureDbAdapter.CHAPTER_TITLE, c.getString(
-                c.getColumnIndexOrThrow(ScriptureDbAdapter.CHAPTER_TITLE)));
+        i.putExtra(ScriptureDbAdapter.CHAPTER_TITLE, chapterTitle);
         i.putExtra(ReadChapterActivity.CALLING_ACTIVITY, this.getClass().getName());
-        
+        return i;
+	}
+	
+    private void openChapter(int position, Long id){
+    	log("--- opening chapter");
+
+    	log("creating intent");
+    	Intent i = getChapterIntent(id);
+        log("starting activity");
         startActivityForResult(i, ACTIVITY_READ_CHAPTER);
+    	log("activity started");
     }
     
     private String getShortBookTitle(Long bookId){
@@ -255,6 +307,7 @@ public class BrowseScriptureActivity extends ListActivity {
     
     protected void beginBrowsing(Intent intent){
     	int intendedBrowseMode = intent == null ? BROWSE_SCRIPTURES_MODE : intent.getIntExtra(BROWSE_MODE, BROWSE_SCRIPTURES_MODE);
+    	log("Browse Mode: " + Integer.toString(intendedBrowseMode,0));
     	switch (intendedBrowseMode){
 			case BROWSE_SCRIPTURES_MODE:
 				browseScriptures();
@@ -264,6 +317,9 @@ public class BrowseScriptureActivity extends ListActivity {
     			break;
     		case BROWSE_BOOK_MODE:
 				browseBook(intent.getExtras().getLong(ScriptureDbAdapter.BOOK_ID));
+    			break;
+    		case OPEN_VERSE_MODE:
+    			openVerse(intent.getExtras().getLong(ScriptureDbAdapter.VERSE_ID));
     			break;
     	}
     }
@@ -340,7 +396,7 @@ public class BrowseScriptureActivity extends ListActivity {
     
     public void log(String tag, String message){
     	if(DEBUG){
-        	Log.i(tag, message);
+        	Log.d(tag, message);
     	}
     }
 

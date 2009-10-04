@@ -32,10 +32,13 @@ public class ScriptureDbAdapter {
     public static final String BOOK_SUBTITLE = "book_subtitle";
     public static final String BOOK_NUM_CHAPTERS = "num_chapters";
     
+    public static final String CHAPTER_ID = "chapter";
     public static final String CHAPTER_NUM = "chapter";
     public static final String CHAPTER_TITLE = "chapter_title";
 
+    public static final String VERSE_ID = "verse_id";
     public static final String VERSE_NUMBER = "verse";
+    public static final String VERSE_SHORT_TITLE = "verse_title_short";
     public static final String VERSE_TEXT = "verse_scripture";
     public static final String VERSE_PILCROW = "pilcrow";
     
@@ -54,13 +57,13 @@ public class ScriptureDbAdapter {
 	private static final String VERSE_QUERY_STRING_FOR_BOOKS = "SELECT verse_id as _id, volume_id, book_id, chapter, verse, pilcrow, verse_scripture, verse_title, verse_title_short FROM verses WHERE book_id = ? AND chapter = ? ORDER BY volume_id, book_id, chapter, verse";
 	private static final String VERSE_QUERY_STRING_FOR_VOLUME = "SELECT verse_id as _id, volume_id, book_id, chapter, verse, pilcrow, verse_scripture, verse_title, verse_title_short FROM verses WHERE volume_id = ? ORDER BY volume_id, book_id, chapter, verse";
 
+	private static final String VERSE_QUERY_STRING_FOR_ALL = "SELECT verse_id as _id, volume_id, book_id, chapter, verse, pilcrow, verse_scripture, verse_title, verse_title_short FROM verses WHERE verse_scripture like ? LIMIT 25";
+
 	private static final String SINGLE_VERSE_QUERY = "SELECT verse_id as _id, volume_id, book_id, chapter, verse, pilcrow, verse_scripture, verse_title, verse_title_short FROM verses WHERE _id = ?";
 	private static final String SINGLE_CHAPTER_QUERY_STRING = "SELECT DISTINCT v.chapter as _id, (b.book_title || ' ' || v.chapter) AS chapter_title, v.book_id AS book_id, o.volume_title AS volume_title, o.volume_title_long AS volume_title_long, b.book_title AS book_title, b.book_title_short AS book_title_short FROM verses v, books b, volumes o WHERE o.volume_id = b.volume_id AND v.book_id = b.book_id AND v.book_id = ? AND v.chapter = ?";
 	private static final String SINGLE_BOOK_QUERY = "SELECT book_id as _id, volume_id, book_title, book_title_short, book_title_jst, book_subtitle, num_chapters FROM books WHERE _id = ? ORDER BY _id";
 	private static final String SINGLE_VOLUME_QUERY = "SELECT volume_id as _id, volume_title, volume_title_long FROM volumes WHERE _id = ?";
 
-	private static final String EXACT_VERSE_QUERY = "SELECT _id, book_id, chapter, verse_id, note FROM verses WHERE verse_scripture LIKE '%?% AND volume_id in (?)";
-	
 	private static final String GET_MAX_BOOK_ID = "SELECT MAX(book_id) AS book_id FROM books";
 	
 	private static final String ALL_BOOKMARKS_QUERY = "SELECT DISTINCT m._id AS _id, (b.book_title || ' ' || v.chapter) AS chapter_title, m.book_id as book_id , m.chapter as chapter, m.title as title, m.position as position FROM verses v, books b, bookmarks m WHERE v.book_id = b.book_id AND m.book_id = v.book_id AND v.chapter = m.chapter ORDER BY book_id, chapter";
@@ -82,13 +85,13 @@ public class ScriptureDbAdapter {
 	private static final String ALL_MARKINGS_QUERY = "SELECT _id, book_id, chapter, verse_id, mark_type, color FROM markings";
 	private static final String CHAPTER_MARKINGS_QUERY = "SELECT _id, book_id, chapter, verse_id, mark_type, color FROM markings WHERE book_id = ? AND chapter = ?";
 
-	
-	private final Context mCtx;
+	private SharedPreferences settings = null;
     private static SQLiteDatabase mDatabase;
     private static int connectionCount = 0;
 
-    public ScriptureDbAdapter(Context ctx){
-    	mCtx = ctx;
+    public ScriptureDbAdapter(SharedPreferences preferences){
+	    settings = preferences; 
+	    	//getSharedPreferences(SetPreferencesActivity.PREFS_NAME, 0);
     }
     
     /**
@@ -106,7 +109,6 @@ public class ScriptureDbAdapter {
     }
     
     public String getDatabaseLocation(){
-	    SharedPreferences settings = mCtx.getSharedPreferences(SetPreferencesActivity.PREFS_NAME, 0);
 	    String databaseLocation = settings.getString(SetPreferencesActivity.DATABASE_PREF, SetPreferencesActivity.DEFAULT_DATABASE_NAME);
 		
 	    File databaseFile = new File(databaseLocation);
@@ -280,14 +282,12 @@ public class ScriptureDbAdapter {
     protected void log(String tag, String message){
 		if(BrowseScriptureActivity.DEBUG){
 	    	Log.i(tag, message);
-			Toast.makeText(mCtx, message, Toast.LENGTH_LONG);
 		}
     }
     
     protected void log(String tag, String message, Throwable th){
 		if(BrowseScriptureActivity.DEBUG){
 	    	Log.e(tag, message, th);
-			Toast.makeText(mCtx, message, Toast.LENGTH_LONG);
 		}
     }
 
@@ -370,6 +370,11 @@ public class ScriptureDbAdapter {
 	public Cursor fetchSingleBookmark(long bookmarkId) {
     	String[] args = new String[] {Long.toString(bookmarkId)};
     	return queryAndMoveToFirst(SINGLE_BOOKMARK_QUERY, args);
+	}
+	
+	public Cursor searchAllVerses(String contentString) {
+		String[] args = new String[] {'%' + contentString + '%'};
+		return query(VERSE_QUERY_STRING_FOR_ALL, args);
 	}
 
 }
