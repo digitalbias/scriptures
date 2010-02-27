@@ -34,14 +34,7 @@
 <searchable xmlns:android="http://schemas.android.com/apk/res/android"
         android:searchSuggestAuthority="scripture"
         android:searchSuggestIntentAction="android.intent.action.VIEW" 
-        android:label="@string/search_label" >
-</searchable>
-<!-- 
-<searchable xmlns:android="http://schemas.android.com/apk/res/android"
-        android:searchSuggestAuthority="scripture"
-        android:searchSuggestIntentAction="android.intent.action.VIEW" 
         android:label="@string/search_label" 
         android:includeInGlobalSearch="true"
         android:searchSettingsDescription="@string/settings_description">
 </searchable>
--->

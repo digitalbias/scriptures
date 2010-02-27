@@ -1,9 +1,7 @@
 package com.digitalbias.android;
 
 import android.app.AlertDialog;
-import android.app.Application;
 import android.app.ListActivity;
-import android.app.SearchManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;

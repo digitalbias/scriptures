@@ -387,7 +387,7 @@ public class ReadChapterActivity extends Activity implements OnTouchListener, On
 			public void onClick(View v) {
 				dialog.hide();
 				createBookmark(dialog);
-				log("bookmark created");
+				showMessage("Bookmark created");
 				dialog.dismiss();
 			}
 		});
@@ -510,7 +510,7 @@ public class ReadChapterActivity extends Activity implements OnTouchListener, On
         super.onActivityResult(requestCode, resultCode, intent);
         log("result");
         if (resultCode == RESULT_OK && requestCode == ACTIVITY_SELECT_BOOKMARK) {
-    		Toast.makeText(mContext, "Bookmark updated", Toast.LENGTH_LONG).show();
+        	showMessage("Bookmark updated");
         }
     }
     
@@ -549,10 +549,14 @@ public class ReadChapterActivity extends Activity implements OnTouchListener, On
 		return false;
 	}
 	
+	public void showMessage(String message){
+		Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+	}
+	
 	public void log(String message){
 		if(BrowseScriptureActivity.DEBUG){
 			Log.i("read",message);
-			Toast.makeText(this, message, Toast.LENGTH_LONG);
+//			showMessage(message);
 		}
 	}
 
