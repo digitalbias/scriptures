@@ -1,0 +1,5 @@
+All the code in this project is copyright David Mitchell.
+
+If you want to use the code in another open source program than you may as long as you do not charge for it.
+
+If you plan on charging or making money from this software in any fashion than you need to contact me for a suitable arrangement on how you can use the source code.
